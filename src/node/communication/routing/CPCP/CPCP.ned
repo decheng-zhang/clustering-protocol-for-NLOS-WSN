@@ -1,0 +1,43 @@
+
+package node.communication.routing.CPCP;
+
+simple CPCP like node.communication.routing.iRouting
+{
+parameters:
+	string applicationID = default ("throughputTest");
+	bool collectTraceInfo;
+	int maxNetFrameSize = default (0);
+	int netDataFrameOverhead = default (14);
+	int netBufferSize = default (32);		
+	bool isSink = default (false);
+	
+	double percentage;	
+	double roundLength @unit(s);	
+	double slotLength;
+	double energy = default (18720);
+	double sensingRange;
+	int noActiveNodes = default (0);
+	double initialEnergy;
+	bool isActive = default (true);
+	bool isCH = default (false);
+	bool isCM = default (false);
+
+	string minWghts = "";
+
+	//routing layer packet sizes
+	int advPacketSize = default (9); // Type + Source + Destination = 9 bytes
+	int joinPacketSize = default (9);
+	int tdmaPacketSize = default (150); // Type + Source + Destination + tdma = 150 bytes
+	int dataPacketSize = default (9);
+	int numberOfRounds = default(1);
+	//Parameters used to power control.
+	xml powersConfig;
+
+gates: 
+	output toCommunicationModule;
+	output toMacModule;
+	input fromCommunicationModule;
+	input fromMacModule;
+	input fromCommModuleResourceMgr;
+}
+

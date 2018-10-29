@@ -1,0 +1,140 @@
+
+1.003543042981    SN.node[1].Communication.Routing         In ADV_RSSI 
+
+1.00404304298     SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.00404304298     SN.node[0].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -87.4282
+
+1.00404304298     SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.00404304298     SN.node[2].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -77.5725
+
+1.00404304298     SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.00404304298     SN.node[3].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -69.5931
+
+1.00404304298     SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.00404304298     SN.node[4].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -58.9121
+
+1.014559492666    SN.node[4].Communication.Routing         In ADV_RSSI 
+
+1.015059492665    SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.015059492665    SN.node[0].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -83.3661
+
+1.015059492665    SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.015059492665    SN.node[1].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -58.6495
+
+1.015059492665    SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.015059492665    SN.node[2].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -67.2434
+
+1.015059492665    SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.015059492665    SN.node[3].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -72.2427
+
+1.027599881077    SN.node[0].Communication.Routing         In ADV_RSSI 
+
+1.028099881076    SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.028099881076    SN.node[1].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -88.8833
+
+1.028099881076    SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.028099881076    SN.node[2].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -87.0732
+
+1.028099881076    SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.028099881076    SN.node[3].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -86.3224
+
+1.028099881076    SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.028099881076    SN.node[4].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -82.9212
+
+1.035458584022    SN.node[2].Communication.Routing         In ADV_RSSI 
+
+1.035958584021    SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.035958584021    SN.node[0].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -86.2247
+
+1.035958584021    SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.035958584021    SN.node[1].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -76.8648
+
+1.035958584021    SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.035958584021    SN.node[3].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -76.0351
+
+1.035958584021    SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.035958584021    SN.node[4].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -66.0837
+
+1.041991453989    SN.node[3].Communication.Routing         In ADV_RSSI 
+
+1.042491453988    SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.042491453988    SN.node[0].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -86.6729
+
+1.042491453988    SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.042491453988    SN.node[1].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -71.0955
+
+1.042491453988    SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.042491453988    SN.node[2].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -74.7576
+
+1.042491453988    SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+1.042491453988    SN.node[4].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -72.3606
+
+100.00421614053   SN.node[1].Communication.Routing         In ADV_RSSI2 
+
+100.004716140529  SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.004716140529  SN.node[0].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -87.4282
+
+100.004716140529  SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.004716140529  SN.node[2].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -77.5725
+
+100.004716140529  SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.004716140529  SN.node[3].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -69.5931
+
+100.004716140529  SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.004716140529  SN.node[4].Communication.Routing         I received an RSSI ADV packet from 1 RSSI = -58.9121
+
+100.015970785978  SN.node[4].Communication.Routing         In ADV_RSSI2 
+
+100.016470785977  SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.016470785977  SN.node[0].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -83.3661
+
+100.016470785977  SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.016470785977  SN.node[1].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -58.6495
+
+100.016470785977  SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.016470785977  SN.node[2].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -67.2434
+
+100.016470785977  SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.016470785977  SN.node[3].Communication.Routing         I received an RSSI ADV packet from 4 RSSI = -72.2427
+
+100.033538481189  SN.node[0].Communication.Routing         In ADV_RSSI2 
+
+100.034038481188  SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.034038481188  SN.node[1].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -88.8833
+
+100.034038481188  SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.034038481188  SN.node[2].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -87.0732
+
+100.034038481188  SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.034038481188  SN.node[3].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -86.3224
+
+100.034038481188  SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.034038481188  SN.node[4].Communication.Routing         I received an RSSI ADV packet from 0 RSSI = -82.9212
+
+100.040526682475  SN.node[2].Communication.Routing         In ADV_RSSI2 
+
+100.041026682474  SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041026682474  SN.node[0].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -86.2247
+
+100.041026682474  SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041026682474  SN.node[1].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -76.8648
+
+100.041026682474  SN.node[3].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041026682474  SN.node[3].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -76.0351
+
+100.041026682474  SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041026682474  SN.node[4].Communication.Routing         I received an RSSI ADV packet from 2 RSSI = -66.0837
+
+100.041397639529  SN.node[3].Communication.Routing         In ADV_RSSI2 
+
+100.041897639528  SN.node[0].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041897639528  SN.node[0].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -86.6729
+
+100.041897639528  SN.node[1].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041897639528  SN.node[1].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -71.0955
+
+100.041897639528  SN.node[2].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041897639528  SN.node[2].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -74.7576
+
+100.041897639528  SN.node[4].Communication.Routing         Received [ADV RSSI] from MAC layer
+100.041897639528  SN.node[4].Communication.Routing         I received an RSSI ADV packet from 3 RSSI = -72.3606
