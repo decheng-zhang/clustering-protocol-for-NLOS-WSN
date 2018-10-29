@@ -2,7 +2,7 @@
 # Clustering Protocol Experiment in WSN
 The repository embodies a set of experiments for NLOS clustering protocol in WSN (Wireless Sensor Network)
 
-##Experiment Details
+## Experiment Details
 All experiment is executed over 100..500 network size
 ### Experiment 1
 PDR for NSGA-LOS-CH vs NSGA-NLOS-CH
@@ -26,8 +26,12 @@ LEACH-3D >> NSGA-CH-NLOS > PSO-CH (due to higher num of CHs)
 Average number of "unclustered sensors" per round
 LEACH-3D >> NSGA-CH-NLOS == PSO-CH
 
-### Proposing
-Demonstrate Coverage performance between three algorithm.
+### New Exper Proposing 1
+Take wide into consideration (portions above the elevation)
+--> Improve on the matrix
+
+### New Exper Proposing 2
+Evaluate the Coverage performance between three algorithms.
 
 ## Software Specs
 
