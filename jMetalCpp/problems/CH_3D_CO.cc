@@ -42,7 +42,53 @@
   		for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
 
 	}
+	
+	CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<double> radiusMatrix)
+	{
+		networkSize = sensors.size();
+		numberOfObjectives_  = 5;
+		numberOfConstraints_ = 0;
+		
+		problemName_         = "CH_3D_CO";
+			
+		numberOfVariables_   = networkSize;
+		
+		for (int i = 0 ; i < networkSize ; i++)
+		{
+			vector<double> r;
+			for (int j = 0 ; j < networkSize ; j++)
+			{
+				r.push_back(0);
+			}
+			clusterHeads.push_back(0);
+			adjacencyMatrix.push_back(r);
+			Sensors.push_back(SensorInfo());
+		}
 
+		for (int i = 0 ; i < networkSize; i++)
+		{
+			Sensors[i].id = sensors[i].id;
+			Sensors[i].x = sensors[i].x;
+			Sensors[i].y = sensors[i].y;
+			Sensors[i].z = sensors[i].z;
+			Sensors[i].energy = sensors[i].energy;
+			//default sensor radius (binary coverage model)
+                        Sensors[i].sensorRadius = 10;
+			for (int j = 0 ; j < networkSize ; j++)
+			{
+				adjacencyMatrix[i][j] = adjacencyM[i][j];
+			}
+		}
+
+		solutionType_ = new BinarySolutionType(this);
+		length_       = new int[numberOfVariables_];
+  		for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
+
+	}
+	private CH_3D_CO :: calOverlayArea(SensorInfo l , SensorInfo r) {
+
+
+	}
 	double CH_3D_CO :: clusterTheNetwork()
 	{
 		network.clear();
