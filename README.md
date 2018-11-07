@@ -29,10 +29,19 @@ LEACH-3D >> NSGA-CH-NLOS == PSO-CH
 ### New Exper Proposing 1
 Take wide into consideration (portions above the elevation)
 --> Improve on the matrix
-
+Thought:
+* Currently, our model considers the diffraction effect in path loss simulation (diffraction loss over knife edge obstruction).
+* Diffraction: diffraction occurs at the edge of an impenetrable body that is large compared to the wavelength of the electromagnetic wave (e.g. terrain, building and vegetation).
+* 
 ### New Exper Proposing 2
 Evaluate the Coverage performance between three algorithms.
+* node uniformlly distribute in 3D rolling terrain.
 
+Question:
+What we want?
+1 A quantity approach to evaluate the coverage (without adding new algorithm and objective function) -- In current simulation, all the sensors are uniformally deplayed in 100x100m^2 area, in other words, these sensor nodes are predetermined and fixed. Comparing the coverage ratio between different clustering algorithm seems logically unsound.
+2 Adding objective function considering coverage issue
+3 Algorithm considering the coverage from the first place (equal to 2)
 ## Software Specs
 
 * Ubuntu 14.04 16.04

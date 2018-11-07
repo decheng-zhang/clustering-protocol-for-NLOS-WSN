@@ -1,8 +1,8 @@
-0#include "PSO_CCP_3D.h"
+#include "NSGA_II_CCP_3D_CO.h"
 
-Define_Module(PSO_CCP_3D);
+Define_Module(NSGA_II_CCP_3D_CO);
 
-void PSO_CCP_3D::startup()
+void NSGA_II_CCP_3D_CO::startup()
 {	
 	isSink = par("isSink");
 	slotLength = par("slotLength");	
@@ -80,7 +80,7 @@ void PSO_CCP_3D::startup()
 	 setTimer(START_ROUND,0.0);
 }
 
-void PSO_CCP_3D :: initializeMatrices()
+void NSGA_II_CCP_3D_CO :: initializeMatrices()
 {
 		for (int i = 0 ; i < networkSize ; i++)
 		{
@@ -117,7 +117,7 @@ void PSO_CCP_3D :: initializeMatrices()
                 }
 }
 
-bool PSO_CCP_3D :: areSameCells(double xt,double yt,double xr,double yr)
+bool NSGA_II_CCP_3D_CO :: areSameCells(double xt,double yt,double xr,double yr)
 {
 
 	bool sameCells = false;
@@ -134,7 +134,7 @@ bool PSO_CCP_3D :: areSameCells(double xt,double yt,double xr,double yr)
 	return sameCells;
 }
 
-bool PSO_CCP_3D :: areNeighoubringCells(double xt,double yt,double xr,double yr)
+bool NSGA_II_CCP_3D_CO :: areNeighoubringCells(double xt,double yt,double xr,double yr)
 {
 
 	bool neighoubringCells = false;
@@ -152,7 +152,7 @@ bool PSO_CCP_3D :: areNeighoubringCells(double xt,double yt,double xr,double yr)
 }
 
 
-void PSO_CCP_3D :: loadDEMData()
+void NSGA_II_CCP_3D_CO :: loadDEMData()
 {
 		ifstream elevationsFile;
  		elevationsFile.open("elevations.txt");
@@ -172,7 +172,7 @@ void PSO_CCP_3D :: loadDEMData()
  }
 
 
-void PSO_CCP_3D :: updateSensorsElevation()
+void NSGA_II_CCP_3D_CO :: updateSensorsElevation()
 {
 		//trace() << "Update Sensors Elevation---\n";
 		cModule *n; 
@@ -219,7 +219,7 @@ void PSO_CCP_3D :: updateSensorsElevation()
 		 myfile.close();
 }
 
-void PSO_CCP_3D :: updateAdjacencyMatrix()
+void NSGA_II_CCP_3D_CO :: updateAdjacencyMatrix()
 {
 	//trace() << "Update Adjacency Matrix---\n";
 
@@ -245,7 +245,7 @@ void PSO_CCP_3D :: updateAdjacencyMatrix()
 	}
 }
 
-void PSO_CCP_3D :: generateLNSMPathLossMap()
+void NSGA_II_CCP_3D_CO :: generateLNSMPathLossMap()
 {
 
 	myfile2.open("PathLossMap.txt");
@@ -336,7 +336,7 @@ void PSO_CCP_3D :: generateLNSMPathLossMap()
 	myfile2.close();	
 }
 
-void PSO_CCP_3D :: updateVisibilityMatrix()
+void NSGA_II_CCP_3D_CO :: updateVisibilityMatrix()
 {
 	for (int i = 0 ; i < networkSize ; i++)
 	{
@@ -359,7 +359,7 @@ void PSO_CCP_3D :: updateVisibilityMatrix()
 	}
 }
  
-double PSO_CCP_3D :: LOS(double xt,double yt,double zt, double xr,double yr, double zr)
+double NSGA_II_CCP_3D_CO :: LOS(double xt,double yt,double zt, double xr,double yr, double zr)
 {
 	double v; // Diffraction Parameter
 	double totalObstPL = 0;
@@ -376,7 +376,7 @@ double PSO_CCP_3D :: LOS(double xt,double yt,double zt, double xr,double yr, dou
         return totalObstPL;
 }
 
-double PSO_CCP_3D :: findNextObstacle(double xt,double yt, double zt , double xr,double yr, double zr) //DDA3 algorithm
+double NSGA_II_CCP_3D_CO :: findNextObstacle(double xt,double yt, double zt , double xr,double yr, double zr) //DDA3 algorithm
 {
     int n;
     int A[] = { xt,         yt,         zt         };
@@ -415,7 +415,7 @@ double PSO_CCP_3D :: findNextObstacle(double xt,double yt, double zt , double xr
 	
     
 
-    for( int i = 0; i < n; i++ )
+    for( int i = 0; i <pp n; i++ )
     {
         //trace() << "Next Point " << coord[0] << "," << coord[1] << "," << coord[2] <<"\n";
 	
@@ -490,7 +490,7 @@ double PSO_CCP_3D :: findNextObstacle(double xt,double yt, double zt , double xr
     return PLDObstacles;
  }
 
-double PSO_CCP_3D :: calculatePLDObstacles(vector<Obstacle> Obstacles)
+double NSGA_II_CCP_3D_CO :: calculatePLDObstacles(vector<Obstacle> Obstacles)
 {
 	double waveLength = 0.33;
 	double PL_Obstacles = 0;
@@ -571,13 +571,13 @@ double PSO_CCP_3D :: calculatePLDObstacles(vector<Obstacle> Obstacles)
 }
 
 
-void PSO_CCP_3D :: fromApplicationLayer(cPacket *pkt, const char *destination)
+void NSGA_II_CCP_3D_CO :: fromApplicationLayer(cPacket *pkt, const char *destination)
 {	
 	if(!isSink)
 	{
 		string dst(destination);
-		PSO_CCP_3D_Packet *netPacket = new PSO_CCP_3D_Packet("PSO_CCP_3D routing data packet", NETWORK_LAYER_PACKET);
-		netPacket->setPSO_CCP_3D_PacketKind(PSO_CCP_3D_DATA_PACKET);
+		NSGA_II_CCP_3D_CO_Packet *netPacket = new NSGA_II_CCP_3D_CO_Packet("NSGA_II_CCP_3D_CO routing data packet", NETWORK_LAYER_PACKET);
+		netPacket->setNSGA_II_CCP_3D_CO_PacketKind(NSGA_II_CCP_3D_CO_DATA_PACKET);
 		netPacket->setByteLength(dataPacketSize);
 		netPacket->setSource(SELF_NETWORK_ADDRESS);
 		encapsulatePacket(netPacket, pkt);
@@ -603,16 +603,16 @@ void PSO_CCP_3D :: fromApplicationLayer(cPacket *pkt, const char *destination)
 	
 }
 
-void PSO_CCP_3D :: fromMacLayer(cPacket *pkt, int macAddress, double rssi, double lqi)
+void NSGA_II_CCP_3D_CO :: fromMacLayer(cPacket *pkt, int macAddress, double rssi, double lqi)
 {
-	PSO_CCP_3D_Packet *netPacket = dynamic_cast <PSO_CCP_3D_Packet*>(pkt);
+	NSGA_II_CCP_3D_CO_Packet *netPacket = dynamic_cast <NSGA_II_CCP_3D_CO_Packet*>(pkt);
 
 	if (!netPacket)	return;
 
-	switch (netPacket->getPSO_CCP_3D_PacketKind()) 
+	switch (netPacket->getNSGA_II_CCP_3D_CO_PacketKind()) 
 	{
 
-		case PSO_CCP_3D_DATA_PACKET:
+		case NSGA_II_CCP_3D_CO_DATA_PACKET:
 		{
 			string dst(netPacket->getDestination());
 			const char *src = netPacket->getSource();
@@ -640,7 +640,7 @@ void PSO_CCP_3D :: fromMacLayer(cPacket *pkt, int macAddress, double rssi, doubl
 }
 
 
-void PSO_CCP_3D :: timerFiredCallback(int index)
+void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 {
     switch (index) 
     {
@@ -835,7 +835,7 @@ void PSO_CCP_3D :: timerFiredCallback(int index)
    }
 }
 
-string PSO_CCP_3D :: returnConfiguration()
+string NSGA_II_CCP_3D_CO :: returnConfiguration()
 {
 		multimap<int,int> network;
 
@@ -891,7 +891,7 @@ string PSO_CCP_3D :: returnConfiguration()
 	}
 
 
-Solution * PSO_CCP_3D :: findBestCompromiseSolution(SolutionSet *set)
+Solution * NSGA_II_CCP_3D_CO :: findBestCompromiseSolution(SolutionSet *set)
 {
 
 	vector<double> minObjectives(4,1000);
@@ -956,7 +956,7 @@ Solution * PSO_CCP_3D :: findBestCompromiseSolution(SolutionSet *set)
 	return best;
 }
 
-void PSO_CCP_3D :: updateSensorInfo()
+void NSGA_II_CCP_3D_CO :: updateSensorInfo()
 {
 	for (int i = 0 ; i < networkSize ; i++)
 	{
@@ -974,7 +974,7 @@ void PSO_CCP_3D :: updateSensorInfo()
 	}
 }
 
-void PSO_CCP_3D :: runCDDP()
+void NSGA_II_CCP_3D_CO :: runCDDP()
 {
 	cModule *tmpModule =check_and_cast<cModule*> (theSNModule->getSubmodule("node",0)->getSubmodule("Communication")->getSubmodule("Routing"));
 	
@@ -1041,16 +1041,16 @@ void PSO_CCP_3D :: runCDDP()
 }
 
 
-void PSO_CCP_3D :: sendAggregate()
+void NSGA_II_CCP_3D_CO :: sendAggregate()
 {
 	if(bufferAggregate.size() != 0)
 	{	
 		double bitsLength = bufferAggregate.size() * dataPacketSize * 1000;
 		double energyBit = (aggrConsumption / pow(10,9)) * bitsLength;
 		//powerDrawn(energyBit);
-		PSO_CCP_3D_Packet *aggrPacket = new PSO_CCP_3D_Packet("CH agg pkt", NETWORK_LAYER_PACKET);
+		NSGA_II_CCP_3D_CO_Packet *aggrPacket = new NSGA_II_CCP_3D_CO_Packet("CH agg pkt", NETWORK_LAYER_PACKET);
 		aggrPacket->setByteLength(dataPacketSize+4);
-		aggrPacket->setPSO_CCP_3D_PacketKind(PSO_CCP_3D_DATA_PACKET);
+		aggrPacket->setNSGA_II_CCP_3D_CO_PacketKind(NSGA_II_CCP_3D_CO_DATA_PACKET);
 		aggrPacket->setSource(SELF_NETWORK_ADDRESS);
 		aggrPacket->setDestination(SINK_NETWORK_ADDRESS);
 		aggrPacket->setNumOfPackets(bufferAggregate.size());
@@ -1069,7 +1069,7 @@ void PSO_CCP_3D :: sendAggregate()
 	}
 }
 
-void PSO_CCP_3D :: processBufferedPacket()
+void NSGA_II_CCP_3D_CO :: processBufferedPacket()
 {
 	string dst;
 	if (isCH)
@@ -1087,7 +1087,7 @@ void PSO_CCP_3D :: processBufferedPacket()
 	while (!tempTXBuffer.empty())
 	{
 		cPacket *pkt = tempTXBuffer.front();	
-		PSO_CCP_3D_Packet *netPacket = dynamic_cast <PSO_CCP_3D_Packet*>(pkt);
+		NSGA_II_CCP_3D_CO_Packet *netPacket = dynamic_cast <NSGA_II_CCP_3D_CO_Packet*>(pkt);
 		netPacket->setDestination(dst.c_str());
 		bufferPacket(netPacket); 
 		tempTXBuffer.pop();
@@ -1100,22 +1100,22 @@ void PSO_CCP_3D :: processBufferedPacket()
 	
 }
 
-void PSO_CCP_3D :: setStateRx()
+void NSGA_II_CCP_3D_CO :: setStateRx()
 {
 	send(createRadioCommand(SET_STATE, RX), "toMacModule");	
 }
 
-void PSO_CCP_3D :: setPowerLevel(double powerLevel)
+void NSGA_II_CCP_3D_CO :: setPowerLevel(double powerLevel)
 {
 	send(createRadioCommand(SET_TX_OUTPUT, powerLevel), "toMacModule");
 }
 
-void PSO_CCP_3D :: setStateSleep()
+void NSGA_II_CCP_3D_CO :: setStateSleep()
 {
 	send(createRadioCommand(SET_STATE, SLEEP), "toMacModule");
 }
 
-void PSO_CCP_3D :: levelTxPower(int linkBudget)
+void NSGA_II_CCP_3D_CO :: levelTxPower(int linkBudget)
 {
 	vector<int>::iterator constIterator;
 	for (constIterator = powers.begin();
@@ -1129,7 +1129,7 @@ void PSO_CCP_3D :: levelTxPower(int linkBudget)
 	}
 }
 
-void PSO_CCP_3D::finishSpecific()
+void NSGA_II_CCP_3D_CO::finishSpecific()
 {
 	DEM.clear();
 	Sensors.clear();
@@ -1138,7 +1138,7 @@ void PSO_CCP_3D::finishSpecific()
 }
 
 
-void PSO_CCP_3D :: readXMLparams()
+void NSGA_II_CCP_3D_CO :: readXMLparams()
 {
 	cXMLElement *rootelement = par("powersConfig").xmlValue();
 	if (!rootelement) endSimulation();
