@@ -39,9 +39,12 @@ Evaluate the Coverage performance between three algorithms.
 
 Question:
 What we want?
-1 A quantity approach to evaluate the coverage (without adding new algorithm and objective function) -- In current simulation, all the sensors are uniformally deplayed in 100x100m^2 area, in other words, these sensor nodes are predetermined and fixed. Comparing the coverage ratio between different clustering algorithm seems logically unsound.
-2 Adding objective function considering coverage issue
-3 Algorithm considering the coverage from the first place (equal to 2)
+
+1 The fifth objective function coverage redundant 
+2 A quantity approach to evaluate the full coverage
+
+Basic assumption:
+The sensors are stationary and homogenous with a fixed sensing radius r_s. Here we assume the binary sensor model: the sensing range of s is a sphere centered at s with a radius of r_s; a point is covered by a sonsor if it is within a distance of r_s and there is a line of sight from the sensor. (The coverage of a sensor with obstacles, may be a partial sphere (how to deal with that??)
 ## Software Specs
 
 * Ubuntu 14.04 16.04

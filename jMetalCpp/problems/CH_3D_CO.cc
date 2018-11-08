@@ -43,49 +43,74 @@
 
 	}
 	
-	CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<double> radiusMatrix)
-	{
-		networkSize = sensors.size();
-		numberOfObjectives_  = 5;
-		numberOfConstraints_ = 0;
+	// CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<double> radiusMatrix)
+	// {
+	// 	networkSize = sensors.size();
+	// 	numberOfObjectives_  = 5;
+	// 	numberOfConstraints_ = 0;
 		
-		problemName_         = "CH_3D_CO";
+	// 	problemName_         = "CH_3D_CO";
 			
-		numberOfVariables_   = networkSize;
+	// 	numberOfVariables_   = networkSize;
 		
-		for (int i = 0 ; i < networkSize ; i++)
-		{
-			vector<double> r;
-			for (int j = 0 ; j < networkSize ; j++)
-			{
-				r.push_back(0);
-			}
-			clusterHeads.push_back(0);
-			adjacencyMatrix.push_back(r);
-			Sensors.push_back(SensorInfo());
-		}
+	// 	for (int i = 0 ; i < networkSize ; i++)
+	// 	{
+	// 		vector<double> r;
+	// 		for (int j = 0 ; j < networkSize ; j++)
+	// 		{
+	// 			r.push_back(0);
+	// 		}
+	// 		clusterHeads.push_back(0);
+	// 		adjacencyMatrix.push_back(r);
+	// 		Sensors.push_back(SensorInfo());
+	// 	}
 
-		for (int i = 0 ; i < networkSize; i++)
-		{
-			Sensors[i].id = sensors[i].id;
-			Sensors[i].x = sensors[i].x;
-			Sensors[i].y = sensors[i].y;
-			Sensors[i].z = sensors[i].z;
-			Sensors[i].energy = sensors[i].energy;
-			//default sensor radius (binary coverage model)
-                        Sensors[i].sensorRadius = 10;
-			for (int j = 0 ; j < networkSize ; j++)
-			{
-				adjacencyMatrix[i][j] = adjacencyM[i][j];
-			}
-		}
+	// 	for (int i = 0 ; i < networkSize; i++)
+	// 	{
+	// 		Sensors[i].id = sensors[i].id;
+	// 		Sensors[i].x = sensors[i].x;
+	// 		Sensors[i].y = sensors[i].y;
+	// 		Sensors[i].z = sensors[i].z;
+	// 		Sensors[i].energy = sensors[i].energy;
+	// 		//default sensor radius (binary coverage model)
+        //                 Sensors[i].sensorRadius = 10;
+	// 		for (int j = 0 ; j < networkSize ; j++)
+	// 		{
+	// 			adjacencyMatrix[i][j] = adjacencyM[i][j];
+	// 		}
+	// 	}
 
-		solutionType_ = new BinarySolutionType(this);
-		length_       = new int[numberOfVariables_];
-  		for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
+	// 	solutionType_ = new BinarySolutionType(this);
+	// 	length_       = new int[numberOfVariables_];
+  	// 	for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
 
-	}
-	private CH_3D_CO :: calOverlayArea(SensorInfo l , SensorInfo r) {
+	// }
+          double CH_3D_CO :: calOverlayArea(SensorInfo l , SensorInfo r) {
+	      double distance = sqrt(pow((l.x-r.x),2) + pow((l.y-r.y),2) + pow((l.z-r.z), 2) );
+	      double large =0.0, small = 0.0;
+
+	      if(l.sensorRadius > r.sensorRadius) {
+
+		large = l.sensorRadius;
+		small = r.sensorRadius;
+
+	      } else {
+		large = r.sensorRadius;
+		small = l.sensorRadius;
+
+	      }
+
+	      if (distance < large-small ) {
+		return 4 * M_PI * pow(small,3) / 3;
+	      } else if (distance <= large + small) {
+		return (M_PI * pow((large + small - distance), 2) 
+			*(pow((large + small + distance), 2) - 
+			  4 * (pow(large,2) + pow(small, 2) - small* large))) / (12 * distance);
+	      } else {
+		return 0;    
+	      }
+
+
 
 
 	}
@@ -127,9 +152,9 @@
 	}
 
         double CH_3D_CO :: getCoverage()
-        {
-
-        }
+         {
+	      
+         }
 	double CH_3D_CO :: getCompactness()
 	{
 		double maxRSSI = -100;

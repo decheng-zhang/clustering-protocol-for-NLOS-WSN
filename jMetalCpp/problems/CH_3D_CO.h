@@ -70,11 +70,12 @@ class CH_3D_CO : public Problem
 	vector <vector<double> > adjacencyMatrix;
 	vector <vector<double> > coverageMatrix;
 	vector <vector<double> > overlappingMatrix;
-	double calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);
 	
+	double calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);	
   public:
 	
 
+	
 	CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors);
 		
 	~CH_3D_CO();
