@@ -54,18 +54,20 @@ void NSGA_II_CCP_3D_CO::startup()
 	DEM.clear();
 	visibilityMatrix.clear();
 	Sensors.clear();
-
+	Tin_Matrix.clear();
 	
 	
      	if (isSink)
 	{
 		initializeMatrices();		
 		loadDEMData();
+		updateTinMatrix();
 		updateSensorsElevation();
 		updateVisibilityMatrix();
 		generateLNSMPathLossMap();
+		updateCoverageMatrix();
 		//updateAdjacencyMatrix();
-         	
+		testingFun();
     	}
 	  readXMLparams();
 	
@@ -79,6 +81,133 @@ void NSGA_II_CCP_3D_CO::startup()
 
 	 setTimer(START_ROUND,0.0);
 }
+// void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
+// {
+//   for (int i=0;i< networkSize; i++){
+//     for (int j=0
+//   }
+
+// }
+void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
+{
+  for (int s_idx =Sensors.size()-1;s_idx>Sensors.size()-2 ;s_idx--){
+  //0 no checked, 1 : checked and valid , 2 : checked and invalid
+    vector<vector<int> > sqMatrix (NO_TIN_D, vector<int> (NO_TIN_D, 0));
+    // ostringstream os;
+    // os<<"x: "<< Sensors[s_idx].x <<"y: "<<Sensors[s_idx].y<<"senrange: "<< Sensors[s_idx].sensorRadius;
+    // trace()<< os.str();
+  
+    updateSingleCoverage(sqMatrix, Sensors[s_idx] );
+
+    for(int i=0;i< sqMatrix.size();i++){
+      for(int j = 0;j<sqMatrix[0].size();j++){
+	//sqmatrix is row col
+	if(sqMatrix[i][j]== 1){
+	  auto p = findTinIdFromSqtCoor(j,i);
+	  for(auto p_e : p){
+	    //Tin is pure (x, y), sensor is pure (x,y)
+	    if(coveringTin(Tin_Matrix[p_e], Sensors[s_idx])){
+	      coverageMatrix[p_e] = 1;
+	      
+	    }
+  
+	  }
+	}
+	
+      }
+    }
+  }
+}
+
+
+void  NSGA_II_CCP_3D_CO ::  updateSingleCoverage(vector<vector<int>> &board, SensorInfo sen) 
+{
+  //  vector<pair<int, int>> rst;
+  double r = sen.sensorRadius;
+  double s_x = sen.x;
+  double s_y = sen.y;
+  double s_z = sen.z;
+  double cellwidth =(double) width / (double) NO_TIN_D; 
+  int tem_j = int(s_x / cellwidth);
+  int tem_i = int(s_y /cellwidth);
+  bfs(board, tem_i, tem_j, s_x, s_y, sen.sensorRadius); 
+   for(auto row : board){
+      trace() << "\n";
+      ostringstream os;
+      for(auto ele : row){
+	//	trace()<<" "<< ele <<" ";
+	
+	os<< ele <<" ";
+      }
+      trace()<< os.str();
+   }
+
+}
+
+void NSGA_II_CCP_3D_CO :: bfs (vector<vector<int>> &board, int row, int col, double coorx, double coory, double sen_range) {
+  //row col
+  typedef pair<int, int> state;
+
+  queue<state> q;
+  const int m =  board.size();
+  const int n = board[0].size();
+  auto state_is_valid = [&](const state &s) {
+    // row and col
+    const int x = s.first;
+    const int y = s.second;
+    if( x < 0 || x >= m || y< 0 || y>= n|| board[x][y] != 0){
+      return false;
+    }
+    return true;
+  };
+  auto out_of_radius = [&](const state &s  ) {
+    const double cellwidth =(double) width / (double) NO_TIN_D; 
+    const double x_min_distance =   std::min(std::abs((s.second) * cellwidth - coorx) 
+					     , std::abs((s.second+1) * cellwidth - coorx));
+    const double y_min_distance =   std::min(std::abs((s.first) * cellwidth - coory) 
+					     , std::abs((s.first+1) * cellwidth - coory));
+    return (x_min_distance >= sen_range)||(y_min_distance >= sen_range);
+  };
+
+
+  auto state_extend = [&](const state &s ){
+    vector<state> ext_result;
+    ext_result.clear();
+    const int x = s.first;
+    const int y = s.second;
+    const state new_states[4] = {
+      {x-1, y}, {x+1, y}, {x, y-1}, {x, y+1}};
+    for(int k=0;k<4;++k){
+      if(state_is_valid(new_states[k])){
+  //0: un-checked, 1 : checked and valid , 2 : checked and invalid
+	if(!out_of_radius(new_states[k])){
+	  board[new_states[k].first][new_states[k].second] = 1;
+	  ext_result.push_back(new_states[k]);
+	} else{
+	  board[new_states[k].first][new_states[k].second] = 2;
+	}
+      } 
+	
+	
+    }
+    return ext_result;
+   
+  };
+
+  state start ={row, col};
+  if(state_is_valid (start)){
+    board[row][col] = 1;
+    q.push(start);
+  }
+  while(!q.empty()){
+    auto cur = q.front();
+    q.pop();
+    auto new_states = state_extend(cur);
+    for(auto s: new_states) q.push(s);
+  }
+}
+
+
 
 void NSGA_II_CCP_3D_CO :: initializeMatrices()
 {
@@ -96,14 +225,9 @@ void NSGA_II_CCP_3D_CO :: initializeMatrices()
 			Sensors.push_back(SensorInfo());
         	}
 
-		for (int i = 0 ; i < numOfCells ; i++)
+		for (int i = 0 ; i < NO_TIN_D*NO_TIN_D *2 ; i++)
 		{
-			vector<double> r;
-			for (int j = 0 ; j < networkSize ; j++)
-			{
-				r.push_back(0);
-			}
-			coverageMatrix.push_back(r);
+			coverageMatrix.push_back(0);
          	}
 
 		for (int i = 0 ; i < 20 ; i++)
@@ -151,6 +275,28 @@ bool NSGA_II_CCP_3D_CO :: areNeighoubringCells(double xt,double yt,double xr,dou
 	return neighoubringCells;
 }
 
+//update the tin matrix utilize the loaded DEM info
+void NSGA_II_CCP_3D_CO :: updateTinMatrix()
+{
+  // int noOfTilehori = 0, noOfTileVerti =0;
+  static int tin_id = 0;
+  double TIN_D = (double) width / (double) NO_TIN_D;
+
+       for(int i =0 ;i < NO_TIN_D; i++){
+
+	for( int j=0;j < NO_TIN_D; j++){
+	  coor3d upperleft = givingElev({j*TIN_D, i*TIN_D, 0});
+	  coor3d lowerleft = givingElev({j*TIN_D, (i+1)*TIN_D, 0});
+	  coor3d upperright = givingElev({(j+1)*TIN_D, i*TIN_D, 0});
+	  coor3d lowerright = givingElev({(j+1)*TIN_D, (i+1)*TIN_D, 0});
+	  //the vertices in tin has (x,y)
+	  Tin_Matrix.push_back( Tin(tin_id++, upperleft, lowerleft, lowerright));
+	  //	  Tin temp = Tin_Matrix.back();
+	  //	  trace() << "tin-" << temp.id << " : "<< temp.first.x << " - "<< temp.first.y <<"\n";
+	  Tin_Matrix.push_back( Tin(tin_id++, upperleft, upperright, lowerright));
+	}
+      }
+}
 
 void NSGA_II_CCP_3D_CO :: loadDEMData()
 {
@@ -207,6 +353,7 @@ void NSGA_II_CCP_3D_CO :: updateSensorsElevation()
 			Sensors[j].x = s_x;
 			Sensors[j].y = s_y;
 			Sensors[j].z =  DEM[row][column];
+			Sensors[j].sensorRadius = sensingRange;
 
 			myfile << "SN.node[" << j << "].xCoor = " <<  s_x << "\n";
 			myfile << "SN.node[" << j << "].yCoor = " <<  s_y << "\n";
@@ -321,7 +468,7 @@ void NSGA_II_CCP_3D_CO :: generateLNSMPathLossMap()
 			if (isObstacleAware) PLd += visibilityMatrix[i][j]; // // add obstacles effect
 			avgPathLoss += PLd;
 			adjacencyMatrix[i][j] = maxPower - PLd;
-			trace() << "RSSI of the link from "<< j << " to " << i << " = " << adjacencyMatrix[i][j] << "\n";
+			//trace() << "RSSI of the link from "<< j << " to " << i << " = " << adjacencyMatrix[i][j] << "\n";
 			
 				PLD[i][j] = PLd;
 
@@ -415,7 +562,7 @@ double NSGA_II_CCP_3D_CO :: findNextObstacle(double xt,double yt, double zt , do
 	
     
 
-    for( int i = 0; i <pp n; i++ )
+    for( int i = 0; i < n; i++ )
     {
         //trace() << "Next Point " << coord[0] << "," << coord[1] << "," << coord[2] <<"\n";
 	
@@ -485,7 +632,7 @@ double NSGA_II_CCP_3D_CO :: findNextObstacle(double xt,double yt, double zt , do
     //if (noOfObstacles != 0 ) PLDObstacles = PLDObstacles / noOfObstacles;
     //else PLDObstacles = 0;
 
-    trace() << "Total number of obstacles  = " << noOfObstacles << " PLDObstacles  = " << PLDObstacles <<"\n";
+    // trace() << "Total number of obstacles  = " << noOfObstacles << " PLDObstacles  = " << PLDObstacles <<"\n";
     assert( coord[0] == B[0] && coord[1] == B[1] && coord[2] == B[2] );
     return PLDObstacles;
  }
@@ -563,7 +710,7 @@ double NSGA_II_CCP_3D_CO :: calculatePLDObstacles(vector<Obstacle> Obstacles)
 	
 			PL_Obstacles+= pl;
 		}
-		trace() << "PL due to obstacle " <<  i  << " = " << pl << "\n";
+		//trace() << "PL due to obstacle " <<  i  << " = " << pl << "\n";
 	}
 
 	return PL_Obstacles;
@@ -621,7 +768,7 @@ void NSGA_II_CCP_3D_CO :: fromMacLayer(cPacket *pkt, int macAddress, double rssi
 			{
 				int source = atoi(netPacket->getSource());
 				//actualMembers.push_back(source);
-				trace() << "CH, Aggregate Data Frame from "<< source << "\n";
+				//trace() << "CH, Aggregate Data Frame from "<< source << "\n";
 				double p = 1 / totalPackets;
 				collectOutput("PDR","",p);
 				bufferAggregate.push_back(*netPacket);	
@@ -630,7 +777,7 @@ void NSGA_II_CCP_3D_CO :: fromMacLayer(cPacket *pkt, int macAddress, double rssi
 			{
 		//trace() << "SINK, Processing Data Packet from "<< atoi(netPacket->getSource()) <<"\n";
 				int n = netPacket->getNumOfPackets();
-				trace() << "n= "<< n << "\n";
+				//trace() << "n= "<< n << "\n";
 				collectOutput("Number of data packets received at BS","",n);
 				toApplicationLayer(decapsulatePacket(netPacket));
 			}
@@ -703,7 +850,7 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
   		Operator  * mutation  ; 
   		Operator  * selection ; 
 
-		CH_3D * p = new CH_3D(adjacencyMatrix,Sensors);
+		CH_3D_CO * p = new CH_3D_CO(adjacencyMatrix,Sensors);
 		problem = p;
 			
 		algorithm = new NSGAII(problem);
@@ -753,7 +900,7 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 		}
 		
 	    	double numberOfCHs = clusterHeads.size();
-		trace()<< "Number of CHs per round " << numberOfCHs << "\n";
+		//trace()<< "Number of CHs per round " << numberOfCHs << "\n";
 		collectOutput("Average number of CHs per round","",numberOfCHs/numberRounds);
 
 		string networkStatus = returnConfiguration();		
@@ -886,7 +1033,7 @@ string NSGA_II_CCP_3D_CO :: returnConfiguration()
 		}
 
 		configuration = out.str();
-		trace() << "configuration" << configuration <<"\n";
+		//trace() << "configuration" << configuration <<"\n";
 		return configuration;
 	}
 
@@ -979,7 +1126,7 @@ void NSGA_II_CCP_3D_CO :: runCDDP()
 	cModule *tmpModule =check_and_cast<cModule*> (theSNModule->getSubmodule("node",0)->getSubmodule("Communication")->getSubmodule("Routing"));
 	
  	string info = tmpModule->par("networkInformation").stringValue();
-	trace()<<"NW Info "<< info <<"\n";
+	//trace()<<"NW Info "<< info <<"\n";
 	char_separator<char> sep(";");
     	
 	tokenizer<char_separator<char>> tokens(info, sep);
@@ -1011,7 +1158,7 @@ void NSGA_II_CCP_3D_CO :: runCDDP()
 					if (self == ch)
 					{
 						clusterMembers.push_back(stoi(m));
-					trace() << "CH, will add " <<stoi(m) <<" to members \n";
+						//trace() << "CH, will add " <<stoi(m) <<" to members \n";
 					}
 					if ( self == stoi(m) )
 					{
@@ -1019,7 +1166,7 @@ void NSGA_II_CCP_3D_CO :: runCDDP()
 							myCH = ch;
 							isCM = true;
 							myTDMATurn = j;
-						trace() << " CM, my TDMA is " <<myTDMATurn <<" \n";
+							//trace() << " CM, my TDMA is " <<myTDMATurn <<" \n";
 						
 						
 					}

@@ -38,18 +38,30 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <string>
-
-struct SensorInfo
-{
-	int id;
-	double x;
-	double y;
-	double z;
-	double energy;
-        double sensorRadius;
-
-	
-};
+    struct coor3d {
+    coor3d(double X, double Y, double Z):
+      x(X), y(Y), z(Z){}
+    double x;
+      double y;  
+     double z;
+    };
+    struct Tin //triangular irregular network
+    {
+    Tin(int ID, coor3d FIRST, coor3d SECOND, coor3d THIRD): id(ID), first(FIRST), second(SECOND), third(THIRD) {}
+      int id;
+      coor3d  first;
+      coor3d second;
+      coor3d third;
+    };
+    struct SensorInfo
+    {
+	    int id;
+	    double x;
+	    double y;
+	    double z;
+	    double energy;
+	    double sensorRadius;
+    };
 
 class CH_3D_CO : public Problem
 {
@@ -57,6 +69,7 @@ class CH_3D_CO : public Problem
 	double numOfCubes;
 		
 	ofstream myfile;
+
 
 	int uncover;
 	vector<int> sleepNodes;
@@ -70,8 +83,8 @@ class CH_3D_CO : public Problem
 	vector <vector<double> > adjacencyMatrix;
 	vector <vector<double> > coverageMatrix;
 	vector <vector<double> > overlappingMatrix;
-	
-	double calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);	
+
+
   public:
 	
 
@@ -79,9 +92,10 @@ class CH_3D_CO : public Problem
 	CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors);
 		
 	~CH_3D_CO();
-
+	static double _calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);	
 	double clusterTheNetwork();
 
+	//double  getCoverage();
 	double getCompactness();
 	
 	void evaluate(Solution *solution);

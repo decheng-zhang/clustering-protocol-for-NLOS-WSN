@@ -8,6 +8,7 @@
 #include <string>
 #include <math.h>
 #include <stdlib.h>
+#include <utility>
 #include <stdio.h>
 #include <iostream>
 #include <sstream>
@@ -28,11 +29,12 @@
 #include <BinaryTournament2.h>
 #include <BitFlipMutation.h>
 #include <SinglePointCrossover.h>
-#include <CH_3D.h>
+#include <CH_3D_CO.h>
+//#include <CH_3D.h>
 #include <boost/tokenizer.hpp>
 //#include <ExperimentExecution.h>
 #include <string>
-
+#define NO_TIN_D 20
 using namespace std;
 using namespace boost;
 
@@ -139,10 +141,12 @@ private:
 	vector<SensorInfo> Sensors;
 	vector<vector<double> > DEM;	
 	vector<vector<double> > PLD;	
-	vector<vector<double> > coverageMatrix;	
+	vector<int>  coverageMatrix;	
 	vector<vector<double> > ObstaclesPLDMatrix;
 	vector<vector<double> > adjacencyMatrix;
+
 	vector<vector<double> > visibilityMatrix;
+	vector<Tin> Tin_Matrix;
 	double tp;
 	
 	int noLiveNodes;
@@ -160,16 +164,26 @@ private:
 	vector <int> clusterMembers;
 	vector <int> clusterHeads;
 	queue <cPacket *> tempTXBuffer;
+	void bfs (vector<vector<int>> &board, int row, int col, double coorx, double coory, double sen_range) ;
 
-      	
 public:
-
+	
 	void startup();
 	void fromApplicationLayer(cPacket *, const char *);
 	void fromMacLayer(cPacket *, int, double, double);
 	void timerFiredCallback(int);
 	void updateSensorInfo();
         void runCDDP();
+	void testingFun(){
+	  int i=0;
+	  ostringstream os;
+	  for(auto p : coverageMatrix)
+	    {
+	      if(p) os << i <<" ";
+	      i++;
+	    }
+	  trace() << "TESTING fun:: " << os.str();
+	};
 
 	void initializeMatrices();		
 	void loadDEMData();
@@ -178,7 +192,8 @@ public:
 	void generateLNSMPathLossMap();
 	void updateAdjacencyMatrix();
 	void updateCoverageMatrix();
-
+	void updateTinMatrix();
+	void updateSingleCoverage(vector<vector<int>> &board, SensorInfo sen) ;
 	void processBufferedPacket();
 	string returnConfiguration();
 	void sendAggregate();
@@ -192,7 +207,48 @@ public:
 	void getCell(int x, int y);
 	bool areSameCells(double xt,double yt,double xr,double yr);
 	bool areNeighoubringCells(double xt,double yt,double xr,double yr);
+	bool coveringTin(Tin tin_t , SensorInfo sen){
+	  vector<coor3d> vertiSet = {tin_t.first, tin_t.second, tin_t.third};
+	  bool isCover = true;
+	  for(auto e : vertiSet){
+	    
+	    double ver_to_sen =  sqrt ( pow( (e.x- sen.x),2)+ 
+					pow( (e.y- sen.y),2)+
+					pow( (e.z- sen.z),2)) ;
+	    double range = sen.sensorRadius;
+	    //trace() << ver_to_sen << ": " << (e.x-sen.x)
+	    //	    <<", "<<(e.y-sen.y)<<", "<<(e.z-sen.z);
+	    if( ver_to_sen > range){
+	    
+	      isCover = false; 
+	      break;
+	    }
+
+
+	  }
+	  return isCover;
+	}
 	double LOS(double xt,double yt,double zt, double xr,double yr, double zr);
+	coor3d givingElev (coor3d target) {
+	  coor3d temp =  target;
+	  int max_row = DEM.size();
+	  int max_column = (DEM[0]).size();
+	  int row = std::min((int ) (target.y/cellWidth), max_row-1);
+	  int column =std::min( ( int) (target.x / cellWidth), max_column -1);
+	 temp.z = DEM[row][column];
+	 
+	  return temp;
+	}
+
+	// i, j pure coor()
+	vector<int> findTinIdFromSqtCoor(int i, int j) {
+	  vector<int> rst(2,0);
+	  int sqtId = std::max(j, 0) * NO_TIN_D + i;
+	  rst[0] = sqtId * 2;
+	  rst[1] = sqtId *2 +1;
+	  return rst;
+	}
+
 	double findNextObstacle(double xt,double yt,double zt, double xr,double yr, double zr);
 	double calculatePLDObstacles(vector<Obstacle> Obstacles);
 	void updateNeighborTable(int id, double rssi, double energy);

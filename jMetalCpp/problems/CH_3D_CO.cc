@@ -3,7 +3,7 @@
 	CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors)
 	{
 		networkSize = sensors.size();
-		numberOfObjectives_  = 5;
+		numberOfObjectives_  = 4;
 		numberOfConstraints_ = 0;
 		
 		problemName_         = "CH_3D_CO";
@@ -85,7 +85,7 @@
   	// 	for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
 
 	// }
-          double CH_3D_CO :: calOverlayArea(SensorInfo l , SensorInfo r) {
+          double CH_3D_CO :: _calOverlayArea(SensorInfo l , SensorInfo r) {
 	      double distance = sqrt(pow((l.x-r.x),2) + pow((l.y-r.y),2) + pow((l.z-r.z), 2) );
 	      double large =0.0, small = 0.0;
 
@@ -151,10 +151,10 @@
 		return numberOfClusteredNodes;
 	}
 
-        double CH_3D_CO :: getCoverage()
-         {
+        // double CH_3D_CO :: getCoverage()
+        //  {
 	      
-         }
+        //  }
 	double CH_3D_CO :: getCompactness()
 	{
 		double maxRSSI = -100;
