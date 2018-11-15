@@ -154,6 +154,7 @@ void MOED_CC :: updateCoverageMatrix()
 	
 			for (int K = 0 ; K < (int)(width / cubeWidth) ; K++)
 			{
+			  //counter : how many sensors cover this cube
 				counter = 0;
 				isCovered = false;
 				
@@ -763,6 +764,7 @@ void MOED_CC :: processBufferedPacket()
 	}	
 	
 }
+
 void MOED_CC :: runCDDP()
 {
 		double nonClustered = 0;

@@ -26,25 +26,30 @@ LEACH-3D >> NSGA-CH-NLOS > PSO-CH (due to higher num of CHs)
 Average number of "unclustered sensors" per round
 LEACH-3D >> NSGA-CH-NLOS == PSO-CH
 
-### New Exper Proposing 1
+### New Exper Proposing 1 (aborting)
 Take wide into consideration (portions above the elevation)
 --> Improve on the matrix
 Thought:
 * Currently, our model considers the diffraction effect in path loss simulation (diffraction loss over knife edge obstruction).
 * Diffraction: diffraction occurs at the edge of an impenetrable body that is large compared to the wavelength of the electromagnetic wave (e.g. terrain, building and vegetation).
 * 
-### New Exper Proposing 2
+### New Exper Proposing 2 (proceeding)
 Evaluate the Coverage performance between three algorithms.
 * node uniformlly distribute in 3D rolling terrain.
 
 Question:
 What we want?
 
-1 The fifth objective function coverage redundant 
-2 A quantity approach to evaluate the full coverage
+1 The fifth objective function coverage redundant (yes)
+2 A quantity approach to evaluate the full coverage (yes)
 
 Basic assumption:
 The sensors are stationary and homogenous with a fixed sensing radius r_s. Here we assume the binary sensor model: the sensing range of s is a sphere centered at s with a radius of r_s; a point is covered by a sonsor if it is within a distance of r_s and there is a line of sight from the sensor. (The coverage of a sensor with obstacles, may be a partial sphere (how to deal with that??)
+
+Previous procedure:
+
+"A Full Area Coverage Guaranteed, Engergy efficient Network configuration Stratgy for 3d WSN"
+(Minimize the average number of sensors monitoring a cube)
 ## Software Specs
 
 * Ubuntu 14.04 16.04

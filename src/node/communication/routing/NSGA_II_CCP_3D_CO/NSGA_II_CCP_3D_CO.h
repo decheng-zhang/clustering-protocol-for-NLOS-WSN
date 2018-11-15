@@ -179,10 +179,11 @@ public:
 	  ostringstream os;
 	  for(auto p : coverageMatrix)
 	    {
-	      if(p) os << i <<" ";
+	      if(i%40 ==0) os<< "\n";
+	      os << p <<" ";
 	      i++;
 	    }
-	  trace() << "TESTING fun:: " << os.str();
+	  trace() << "UU " << os.str();
 	};
 
 	void initializeMatrices();		

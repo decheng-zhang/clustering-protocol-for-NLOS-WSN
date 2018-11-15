@@ -90,7 +90,7 @@ void NSGA_II_CCP_3D_CO::startup()
 // }
 void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
 {
-  for (int s_idx =Sensors.size()-1;s_idx>Sensors.size()-2 ;s_idx--){
+  for (int s_idx =Sensors.size()-1;s_idx>=Sensors.size()-1 ;s_idx--){
   //0 no checked, 1 : checked and valid , 2 : checked and invalid
     vector<vector<int> > sqMatrix (NO_TIN_D, vector<int> (NO_TIN_D, 0));
     // ostringstream os;
@@ -131,16 +131,16 @@ void  NSGA_II_CCP_3D_CO ::  updateSingleCoverage(vector<vector<int>> &board, Sen
   int tem_j = int(s_x / cellwidth);
   int tem_i = int(s_y /cellwidth);
   bfs(board, tem_i, tem_j, s_x, s_y, sen.sensorRadius); 
-   for(auto row : board){
-      trace() << "\n";
-      ostringstream os;
-      for(auto ele : row){
-	//	trace()<<" "<< ele <<" ";
+   // for(auto row : board){
+   //    trace() << "\n";
+   //    ostringstream os;
+   //    for(auto ele : row){
+   // 	//	trace()<<" "<< ele <<" ";
 	
-	os<< ele <<" ";
-      }
-      trace()<< os.str();
-   }
+   // 	os<< ele <<" ";
+   //    }
+   //    trace()<< os.str();
+   // }
 
 }
 
