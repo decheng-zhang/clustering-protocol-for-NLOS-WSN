@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 4.6 from src/node/communication/routing/NSGA_II_CCP_3D_CO/NSGA_II_CCP_3D_CO.msg.
+// Generated file, do not edit! Created by opp_msgc 4.5 from src/node/communication/routing/NSGA_II_CCP_3D_CO/NSGA_II_CCP_3D_CO.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -52,6 +52,16 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
 // Template rule which fires if a struct or class doesn't have operator<<
 template<typename T>
 inline std::ostream& operator<<(std::ostream& out,const T&) {return out;}
+
+EXECUTE_ON_STARTUP(
+    cEnum *e = cEnum::find("NSGA_II_CCP_3D_CO_Packet_Type");
+    if (!e) enums.getInstance()->add(e = new cEnum("NSGA_II_CCP_3D_CO_Packet_Type"));
+    e->insert(NSGA_II_CCP_3D_CO_ADV_PACKET, "NSGA_II_CCP_3D_CO_ADV_PACKET");
+    e->insert(NSGA_II_CCP_3D_CO_JOIN_PACKET, "NSGA_II_CCP_3D_CO_JOIN_PACKET");
+    e->insert(NSGA_II_CCP_3D_CO_TDMA_PACKET, "NSGA_II_CCP_3D_CO_TDMA_PACKET");
+    e->insert(NSGA_II_CCP_3D_CO_DATA_PACKET, "NSGA_II_CCP_3D_CO_DATA_PACKET");
+    e->insert(NSGA_II_CCP_3D_CO_FIND_NEIGHBOURS_PACKET, "NSGA_II_CCP_3D_CO_FIND_NEIGHBOURS_PACKET");
+);
 
 nodeData::nodeData()
 {
@@ -269,16 +279,6 @@ void *nodeDataDescriptor::getFieldStructPointer(void *object, int field, int i) 
         default: return NULL;
     }
 }
-
-EXECUTE_ON_STARTUP(
-    cEnum *e = cEnum::find("NSGA_II_CCP_3D_CO_Packet_Type");
-    if (!e) enums.getInstance()->add(e = new cEnum("NSGA_II_CCP_3D_CO_Packet_Type"));
-    e->insert(NSGA_II_CCP_3D_CO_ADV_PACKET, "NSGA_II_CCP_3D_CO_ADV_PACKET");
-    e->insert(NSGA_II_CCP_3D_CO_JOIN_PACKET, "NSGA_II_CCP_3D_CO_JOIN_PACKET");
-    e->insert(NSGA_II_CCP_3D_CO_TDMA_PACKET, "NSGA_II_CCP_3D_CO_TDMA_PACKET");
-    e->insert(NSGA_II_CCP_3D_CO_DATA_PACKET, "NSGA_II_CCP_3D_CO_DATA_PACKET");
-    e->insert(NSGA_II_CCP_3D_CO_FIND_NEIGHBOURS_PACKET, "NSGA_II_CCP_3D_CO_FIND_NEIGHBOURS_PACKET");
-);
 
 Register_Class(NSGA_II_CCP_3D_CO_Packet);
 

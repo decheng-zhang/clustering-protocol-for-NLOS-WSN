@@ -67,7 +67,7 @@ void NSGA_II_CCP_3D_CO::startup()
 		generateLNSMPathLossMap();
 		updateCoverageMatrix();
 		//updateAdjacencyMatrix();
-		testingFun();
+		//testingFun();
     	}
 	  readXMLparams();
 	
@@ -90,7 +90,9 @@ void NSGA_II_CCP_3D_CO::startup()
 // }
 void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
 {
-  for (int s_idx =Sensors.size()-1;s_idx>=Sensors.size()-1 ;s_idx--){
+
+  coveringMappingMatrix = vector<vector<int>> (Sensors.size(), vector<int>(0));
+  for (int s_idx =Sensors.size()-1;s_idx>=0 ;s_idx--){
   //0 no checked, 1 : checked and valid , 2 : checked and invalid
     vector<vector<int> > sqMatrix (NO_TIN_D, vector<int> (NO_TIN_D, 0));
     // ostringstream os;
@@ -108,6 +110,7 @@ void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
 	    //Tin is pure (x, y), sensor is pure (x,y)
 	    if(coveringTin(Tin_Matrix[p_e], Sensors[s_idx])){
 	      coverageMatrix[p_e] = 1;
+	      coveringMappingMatrix[s_idx].push_back(p_e);
 	      
 	    }
   
@@ -850,7 +853,8 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
   		Operator  * mutation  ; 
   		Operator  * selection ; 
 
-		CH_3D_CO * p = new CH_3D_CO(adjacencyMatrix,Sensors);
+		CH_3D_CO * p = // new CH_3D_CO(adjacencyMatrix,Sensors);
+		  new CH_3D_CO(adjacencyMatrix,Sensors, coverageMatrix,coveringMappingMatrix);
 		problem = p;
 			
 		algorithm = new NSGAII(problem);
@@ -1041,8 +1045,8 @@ string NSGA_II_CCP_3D_CO :: returnConfiguration()
 Solution * NSGA_II_CCP_3D_CO :: findBestCompromiseSolution(SolutionSet *set)
 {
 
-	vector<double> minObjectives(4,1000);
-	vector<double> maxObjectives(4,-1000);
+	vector<double> minObjectives(5,1000);
+	vector<double> maxObjectives(5,-1000);
 
 	for (int i = 0 ; i < set->size() ; i++)
 	{

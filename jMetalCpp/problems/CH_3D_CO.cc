@@ -7,7 +7,7 @@
 		numberOfConstraints_ = 0;
 		
 		problemName_         = "CH_3D_CO";
-			
+		
 		numberOfVariables_   = networkSize;
 		
 		for (int i = 0 ; i < networkSize ; i++)
@@ -43,48 +43,48 @@
 
 	}
 	
-	// CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<double> radiusMatrix)
-	// {
-	// 	networkSize = sensors.size();
-	// 	numberOfObjectives_  = 5;
-	// 	numberOfConstraints_ = 0;
+CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<int> coverageM, vector<vector<int>> coverageMapping)
+	{
+		networkSize = sensors.size();
+		numberOfObjectives_  = 5;
+		numberOfConstraints_ = 0;
+		coverageMatrix = coverageM;
+		problemName_         = "CH_3D_CO";
+		coverageMappingMatrix = coverageMapping;
+		numberOfVariables_   = networkSize;
 		
-	// 	problemName_         = "CH_3D_CO";
-			
-	// 	numberOfVariables_   = networkSize;
-		
-	// 	for (int i = 0 ; i < networkSize ; i++)
-	// 	{
-	// 		vector<double> r;
-	// 		for (int j = 0 ; j < networkSize ; j++)
-	// 		{
-	// 			r.push_back(0);
-	// 		}
-	// 		clusterHeads.push_back(0);
-	// 		adjacencyMatrix.push_back(r);
-	// 		Sensors.push_back(SensorInfo());
-	// 	}
+		for (int i = 0 ; i < networkSize ; i++)
+		{
+			vector<double> r;
+			for (int j = 0 ; j < networkSize ; j++)
+			{
+				r.push_back(0);
+			}
+			clusterHeads.push_back(0);
+			adjacencyMatrix.push_back(r);
+			Sensors.push_back(SensorInfo());
+		}
 
-	// 	for (int i = 0 ; i < networkSize; i++)
-	// 	{
-	// 		Sensors[i].id = sensors[i].id;
-	// 		Sensors[i].x = sensors[i].x;
-	// 		Sensors[i].y = sensors[i].y;
-	// 		Sensors[i].z = sensors[i].z;
-	// 		Sensors[i].energy = sensors[i].energy;
-	// 		//default sensor radius (binary coverage model)
-        //                 Sensors[i].sensorRadius = 10;
-	// 		for (int j = 0 ; j < networkSize ; j++)
-	// 		{
-	// 			adjacencyMatrix[i][j] = adjacencyM[i][j];
-	// 		}
-	// 	}
+		for (int i = 0 ; i < networkSize; i++)
+		{
+			Sensors[i].id = sensors[i].id;
+			Sensors[i].x = sensors[i].x;
+			Sensors[i].y = sensors[i].y;
+			Sensors[i].z = sensors[i].z;
+			Sensors[i].energy = sensors[i].energy;
+			//default sensor radius (binary coverage model)
+                        Sensors[i].sensorRadius = sensors[i].sensorRadius;
+			for (int j = 0 ; j < networkSize ; j++)
+			{
+				adjacencyMatrix[i][j] = adjacencyM[i][j];
+			}
+		}
 
-	// 	solutionType_ = new BinarySolutionType(this);
-	// 	length_       = new int[numberOfVariables_];
-  	// 	for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
+		solutionType_ = new BinarySolutionType(this);
+		length_       = new int[numberOfVariables_];
+  		for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
 
-	// }
+	}
           double CH_3D_CO :: _calOverlayArea(SensorInfo l , SensorInfo r) {
 	      double distance = sqrt(pow((l.x-r.x),2) + pow((l.y-r.y),2) + pow((l.z-r.z), 2) );
 	      double large =0.0, small = 0.0;
@@ -151,10 +151,43 @@
 		return numberOfClusteredNodes;
 	}
 
-        // double CH_3D_CO :: getCoverage()
-        //  {
-	      
-        //  }
+double CH_3D_CO::  evaluateCoverageRedundancy(){
+
+  int totalCoverage = 0;
+  for(const auto & ele : coverageMatrix){
+    if (ele)   totalCoverage++;
+  }
+  double totalCoverageRatio =(double) totalCoverage  / (double)coverageMatrix.size();
+
+  
+  double coverageRedun=0.0 ;
+    for(const auto &ele : clusterHeads){
+      if(ele < coverageMappingMatrix.size()){
+	auto coveredTinSet = coverageMappingMatrix[ele];
+	if(coveredTinSet.size() > 0 ){
+	  double denominator = 0;
+	  double numerator  = 0;
+	  for( auto & coveredTin:  coveredTinSet ) {
+	    numerator ++;
+	     int coveredTimes  = coverageMatrix[coveredTin];
+	     if(coveredTimes < 1 ){
+	       throw "Calculaton error, at least covered by self";
+	     } else {
+	       denominator += 1 / coveredTimes ;
+	     }
+	   }
+	  coverageRedun += numerator/ denominator;
+	}else{
+	  //does nothing,  no covertin, no coverage redundancy;
+	}
+      }else {
+	throw "EA setting problem: sensor id exceed coveragemappingmatrix length!";
+      }
+      
+    }
+    return totalCoverageRatio / coverageRedun;
+
+};
 	double CH_3D_CO :: getCompactness()
 	{
 		double maxRSSI = -100;
@@ -237,6 +270,7 @@
 	      double cnOfClusteredNodes = clusterTheNetwork();
 	      double compactness = getCompactness();
 	      double avgRemainingEnergy = totalEnergy;
+	      double coverRedundancy = evaluateCoverageRedundancy();
 	      double numberOfUnClusteredNodes = networkSize - cnOfClusteredNodes;
 	      // minimize the no of chs
 	      solution->setObjective(0,noOfCHs);
@@ -248,7 +282,7 @@
 	      solution->setObjective(3,numberOfUnClusteredNodes);
 	      //Optimize the coverage
 	      //minimize redundant coverage ratio
-	      //solution->setObjective(4, );
+	      solution->setObjective(4,coverRedundancy);
 	  
 	  }
 

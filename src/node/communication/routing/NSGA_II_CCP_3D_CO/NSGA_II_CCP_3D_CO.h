@@ -141,7 +141,8 @@ private:
 	vector<SensorInfo> Sensors;
 	vector<vector<double> > DEM;	
 	vector<vector<double> > PLD;	
-	vector<int>  coverageMatrix;	
+	vector<int>  coverageMatrix;
+	vector<vector<int>> coveringMappingMatrix;
 	vector<vector<double> > ObstaclesPLDMatrix;
 	vector<vector<double> > adjacencyMatrix;
 

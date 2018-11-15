@@ -81,18 +81,19 @@ class CH_3D_CO : public Problem
 
 	vector <SensorInfo> Sensors;
 	vector <vector<double> > adjacencyMatrix;
-	vector <vector<double> > coverageMatrix;
+	vector <int> coverageMatrix;
 	vector <vector<double> > overlappingMatrix;
-
+	vector<vector<int> > coverageMappingMatrix ;
 
   public:
 	
 
 	
 	CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors);
-		
+	CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<int> , vector<vector<int>> );		
 	~CH_3D_CO();
-	static double _calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);	
+	static double _calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);
+	double  evaluateCoverageRedundancy();
 	double clusterTheNetwork();
 
 	//double  getCoverage();
