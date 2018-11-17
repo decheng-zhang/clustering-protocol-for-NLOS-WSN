@@ -154,6 +154,8 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sens
 double CH_3D_CO::  evaluateCoverageRedundancy(){
 
   int totalCoverage = 0;
+  int sizeOfCH  = clusterHeads.size();
+  
   for(const auto & ele : coverageMatrix){
     if (ele)   totalCoverage++;
   }
@@ -161,6 +163,8 @@ double CH_3D_CO::  evaluateCoverageRedundancy(){
 
   
   double coverageRedun=0.0 ;
+  if(sizeOfCH != 0){
+
     for(const auto &ele : clusterHeads){
       if(ele < coverageMappingMatrix.size()){
 	auto coveredTinSet = coverageMappingMatrix[ele];
@@ -183,9 +187,32 @@ double CH_3D_CO::  evaluateCoverageRedundancy(){
       }else {
 	throw "EA setting problem: sensor id exceed coveragemappingmatrix length!";
       }
-      
+    }      
+  } else{
+    //everyone is CH
+    for(int idx_ch =0;idx_ch < coverageMatrix.size();idx_ch ++){
+    auto coveredTinSet = coverageMappingMatrix[idx_ch];
+	if(coveredTinSet.size() > 0 ){
+	  double denominator = 0.0;
+	  double numerator  = 0.0;
+	  for( auto & coveredTin:  coveredTinSet ) {
+	    numerator ++;
+	     int coveredTimes  = coverageMatrix[coveredTin];
+	     if(coveredTimes < 1 ){
+	       throw "Calculaton error, at least covered by self";
+	     } else {
+	       denominator += 1 / coveredTimes ;
+	     }
+	   }
+	  coverageRedun += numerator/ denominator;
+	}else{
+	  //does nothing,  no covertin, no coverage redundancy;
+	}
     }
-    return totalCoverageRatio / coverageRedun;
+
+}
+  int outsideNumerator = sizeOfCH ==0? coverageMatrix.size() : sizeOfCH;
+    return outsideNumerator / coverageRedun;
 
 };
 	double CH_3D_CO :: getCompactness()
