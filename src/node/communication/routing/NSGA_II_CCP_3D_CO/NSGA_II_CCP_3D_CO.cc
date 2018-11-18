@@ -1,5 +1,5 @@
 #include "NSGA_II_CCP_3D_CO.h"
-
+#include <assert.h>
 Define_Module(NSGA_II_CCP_3D_CO);
 
 void NSGA_II_CCP_3D_CO::startup()
@@ -55,6 +55,8 @@ void NSGA_II_CCP_3D_CO::startup()
 	visibilityMatrix.clear();
 	Sensors.clear();
 	Tin_Matrix.clear();
+	coverageMatrix.clear();
+	
 	
 	
      	if (isSink)
@@ -73,12 +75,12 @@ void NSGA_II_CCP_3D_CO::startup()
 	
           declareOutput("PDR");
 	  declareOutput("Average Path Loss");
-	  declareOutput("Convergence");
+	  // declareOutput("Convergence");
 	  declareOutput("Number of unclustered nodes");
       	  declareOutput("Average number of unclustered nodes per round");
 	  declareOutput("Average number of CHs per round");
 	  declareOutput("Number of data packets received at BS");
-
+	  declareOutput("Coverage Redundancy of CHs per round");
 	 setTimer(START_ROUND,0.0);
 }
 // void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
@@ -90,7 +92,6 @@ void NSGA_II_CCP_3D_CO::startup()
 // }
 void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
 {
-
   coveringMappingMatrix = vector<vector<int>> (Sensors.size(), vector<int>(0));
   for (int s_idx =Sensors.size()-1;s_idx>=0 ;s_idx--){
   //0 no checked, 1 : checked and valid , 2 : checked and invalid
@@ -109,7 +110,7 @@ void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
 	  for(auto p_e : p){
 	    //Tin is pure (x, y), sensor is pure (x,y)
 	    if(coveringTin(Tin_Matrix[p_e], Sensors[s_idx])){
-	      coverageMatrix[p_e] = 1;
+	      coverageMatrix[p_e] += 1;
 	      coveringMappingMatrix[s_idx].push_back(p_e);
 	      
 	    }
@@ -123,7 +124,7 @@ void NSGA_II_CCP_3D_CO :: updateCoverageMatrix()
 }
 
 
-void  NSGA_II_CCP_3D_CO ::  updateSingleCoverage(vector<vector<int>> &board, SensorInfo sen) 
+void  NSGA_II_CCP_3D_CO ::  updateSingleCoverage(vector<vector<int>> &board, const SensorInfo sen) 
 {
   //  vector<pair<int, int>> rst;
   double r = sen.sensorRadius;
@@ -335,12 +336,12 @@ void NSGA_II_CCP_3D_CO :: updateSensorsElevation()
 		Sensors[0].x = 0;
 		Sensors[0].y = 0;
 		Sensors[0].z = height;
-
+		Sensors[0].sensorRadius = sensingRange;
 		myfile << "SN.node[" << 0 << "].xCoor = " <<  0 << "\n";
 		myfile << "SN.node[" << 0 << "].yCoor = " <<  0 << "\n";
 		myfile << "SN.node[" << 0 << "].zCoor = " <<  0 << "\n";
 
-		for (int j = 0 ; j < networkSize ; j++)
+		for (int j = 1 ; j < networkSize ; j++)
 		{
 		 	n = theSNModule->getSubmodule("node",j);
 			r = check_and_cast<ResourceManager*>(n->getSubmodule("ResourceManager"));
@@ -829,6 +830,7 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 		if (isSink) 
 		{ 
 	   		setTimer(RUN_PSO,0.0);	 
+
 		}
 		else
 		{
@@ -852,9 +854,16 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
   		Operator  * crossover ; 
   		Operator  * mutation  ; 
   		Operator  * selection ; 
+	
 
-		CH_3D_CO * p = // new CH_3D_CO(adjacencyMatrix,Sensors);
-		  new CH_3D_CO(adjacencyMatrix,Sensors, coverageMatrix,coveringMappingMatrix);
+		  //CH_3D_CO * p = // new CH_3D_CO(adjacencyMatrix,Sensors);
+		ofstream myfiled;
+		myfiled.open("filedzhang.txt");
+		for(int i = 0;i< Sensors.size();i++){
+		  myfiled << "sensor-radius- id: "<< Sensors[i].id<< "radius: "<<Sensors[i].sensorRadius <<endl;
+	  }
+		myfiled.close();
+	CH_3D_CO * p =  new CH_3D_CO(adjacencyMatrix, Sensors, coverageMatrix,coveringMappingMatrix);
 		problem = p;
 			
 		algorithm = new NSGAII(problem);
@@ -904,9 +913,12 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 		}
 		
 	    	double numberOfCHs = clusterHeads.size();
-		//trace()<< "Number of CHs per round " << numberOfCHs << "\n";
+		trace()<< "Number of CHs per round " << numberOfCHs << "\n";
+		
 		collectOutput("Average number of CHs per round","",numberOfCHs/numberRounds);
-
+		double redundancyOfCHsInThisRound = evaluateCoverageRedundancy();
+		trace()<< "Coverage Redundancy of CHs per round" <<redundancyOfCHsInThisRound << "\n" ;
+		collectOutput("Coverage Redundancy of CHs per round", "", redundancyOfCHsInThisRound );
 		string networkStatus = returnConfiguration();		
 		par("networkInformation") = networkStatus;
 
@@ -985,7 +997,71 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 	
    }
 }
+double NSGA_II_CCP_3D_CO::  evaluateCoverageRedundancy(){
 
+  int totalCoverage = 0;
+  int sizeOfCH  = clusterHeads.size();
+  
+  for(const auto & ele : coverageMatrix){
+    if (ele)   totalCoverage++;
+  }
+  double totalCoverageRatio =(double) totalCoverage  / (double)coverageMatrix.size();
+
+  
+  double coverageRedun=0.0 ;
+  if(sizeOfCH != 0){
+
+    for(const auto &ele : clusterHeads){
+      if(ele < coveringMappingMatrix.size()){
+	auto coveredTinSet = coveringMappingMatrix[ele];
+	if(coveredTinSet.size() > 0 ){
+	  double denominator = 0;
+	  double numerator  = 0;
+	  for( auto & coveredTin:  coveredTinSet ) {
+	    numerator ++;
+	     int coveredTimes  = coverageMatrix[coveredTin];
+	     if(coveredTimes < 1 ){
+	       throw "Calculaton error, at least covered by self";
+	     } else {
+	       denominator += 1.0 / (double)coveredTimes ;
+	     }
+	   }
+	  coverageRedun += numerator/ denominator;
+	}else{
+	  //does nothing,  no covertin, no coverage redundancy;
+	}
+      }else {
+	throw "EA setting problem: sensor id exceed coveragemappingmatrix length!";
+      }
+    }
+    assert( coverageRedun != 0.0);
+  } else{
+    //everyone is CH
+    for(int idx_ch =0;idx_ch < coverageMatrix.size();idx_ch ++){
+    auto coveredTinSet = coveringMappingMatrix[idx_ch];
+	if(coveredTinSet.size() > 0 ){
+	  double denominator = 0.0;
+	  double numerator  = 0.0;
+	  for( auto & coveredTin:  coveredTinSet ) {
+	    numerator ++;
+	     int coveredTimes  = coverageMatrix[coveredTin];
+	     if(coveredTimes < 1 ){
+	       throw "Calculaton error, at least covered by self";
+	     } else {
+	       denominator += 1.0 /(double) coveredTimes ;
+	     }
+	   }
+	  coverageRedun += numerator/ denominator;
+	}else{
+	  //does nothing,  no covertin, no coverage redundancy;
+	}
+    }
+
+}
+  int outsideNumerator = (sizeOfCH ==0)? coverageMatrix.size() : sizeOfCH;
+    return outsideNumerator / coverageRedun;
+
+}
 string NSGA_II_CCP_3D_CO :: returnConfiguration()
 {
 		multimap<int,int> network;
@@ -1074,11 +1150,18 @@ Solution * NSGA_II_CCP_3D_CO :: findBestCompromiseSolution(SolutionSet *set)
 			double membership;
 
 			double objective =  solution->getObjective(j);
-		
-			if (objective <= minObjectives[j] ) membership = 1;
+			if(std::isinf(objective)){
+			    //GDB
+			  }
+			if(minObjectives[j] == maxObjectives[j]) membership = 0;
+			else if (std::isinf(minObjectives[j]) || std::isinf(maxObjectives[j])) membership = 0;
+			else if (objective <= minObjectives[j] ) membership = 1;
 			else if (objective >= maxObjectives[j] ) membership = 0;
 			else membership = (maxObjectives[j] - objective) / (maxObjectives[j] - minObjectives[j]);
+			if(std::isnan(membership) ){
+			  //NG
 
+			};
 			totalMembership+= membership;
 						
 		}
@@ -1088,20 +1171,25 @@ Solution * NSGA_II_CCP_3D_CO :: findBestCompromiseSolution(SolutionSet *set)
 	}
 	
 
-	int index;
+	int index=-1;
 	double maxA = -1000;
 
 	for (int i = 0 ; i < set->size() ; i++)
 	{
 		achievement[i] = achievement[i] / totalAchievement;
 
-		if (achievement[i] > maxA)
+		if (achievement[i] - maxA > 0.0)
 		{
 			maxA = achievement[i];
 			index = i;
 		}
 	
 	}
+	  //gdb jump in;
+	if(index == -1){
+	  //gd;
+	};
+
 
 	Solution *best = set->get(index);
 	return best;
@@ -1122,6 +1210,8 @@ void NSGA_II_CCP_3D_CO :: updateSensorInfo()
 				
 		double energy = c->par("energy").doubleValue(); 
 		Sensors[i].energy = energy;
+		//assert(sensingRange ==20);
+		//		Sensors[i].sensorRadius= sensingRange; 
 	}
 }
 

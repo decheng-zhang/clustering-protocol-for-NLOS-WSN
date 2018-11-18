@@ -55,6 +55,7 @@
     };
     struct SensorInfo
     {
+    SensorInfo(): id(0),x(0.0),y(0.0),z(0.0),energy(0.0),sensorRadius(0.0){}
 	    int id;
 	    double x;
 	    double y;
@@ -90,7 +91,11 @@ class CH_3D_CO : public Problem
 
 	
 	CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors);
-	CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<int> , vector<vector<int>> );		
+	CH_3D_CO(vector< vector<double>> &adjacencyM, 
+		     const vector<SensorInfo> &sensors, 
+		     vector<int>& coverageM, 
+		     vector<vector<int>> &coverageMapping
+		 );
 	~CH_3D_CO();
 	static double _calOverlayArea(SensorInfo lsensor , SensorInfo rsensor);
 	double  evaluateCoverageRedundancy();

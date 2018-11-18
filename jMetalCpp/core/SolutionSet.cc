@@ -88,7 +88,7 @@ bool SolutionSet::add(int index, Solution * solution) {
  */
 Solution * SolutionSet::get(int i) {
   if (i < 0 || i >= solutionsList_.size()) {
-    cout << "Error in class SolutionSet trying to access to an element out of range" << endl;
+    cout << "Error>1 in class SolutionSet trying to access to an element out of range" << endl;
     exit(-1);
   }
   return solutionsList_[i];
@@ -315,7 +315,7 @@ void SolutionSet::clear(){
  */
 void SolutionSet::remove(int i) {
   if (i < 0 || i >= solutionsList_.size()) {
-    cout << "Error in class SolutionSet trying to access to an element out of range" << endl;
+    cout << "Error>2 in class SolutionSet trying to access to an element out of range" << endl;
     exit(-1);
   }
   solutionsList_.erase(solutionsList_.begin() + i);
@@ -348,7 +348,7 @@ SolutionSet * SolutionSet::join(SolutionSet *another) {
  */
 void SolutionSet::replace(int position, Solution *solution) {
   if (position < 0 || position >= solutionsList_.size()) {
-    cout << "Error in class SolutionSet trying to access to an element out of range" << endl;
+    cout << "Error>3 in class SolutionSet trying to access to an element out of range" << endl;
     exit(-1);
   }
   solutionsList_[position] = solution;

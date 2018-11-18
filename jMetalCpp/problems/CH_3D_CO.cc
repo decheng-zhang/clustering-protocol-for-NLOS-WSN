@@ -1,5 +1,5 @@
 #include <CH_3D_CO.h>
-
+#include <assert.h>
 	CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors)
 	{
 		networkSize = sensors.size();
@@ -43,8 +43,14 @@
 
 	}
 	
-CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors, vector<int> coverageM, vector<vector<int>> coverageMapping)
+CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM, 
+		     const vector<SensorInfo> &sensors, 
+		     vector<int> &coverageM, 
+		     vector<vector<int>> &coverageMapping
+		     )
 	{
+
+
 		networkSize = sensors.size();
 		numberOfObjectives_  = 5;
 		numberOfConstraints_ = 0;
@@ -71,8 +77,11 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sens
 			Sensors[i].x = sensors[i].x;
 			Sensors[i].y = sensors[i].y;
 			Sensors[i].z = sensors[i].z;
+			
+	
 			Sensors[i].energy = sensors[i].energy;
-			//default sensor radius (binary coverage model)
+			
+			//assert(sensors[i].sensorRadius != 0.0 );
                         Sensors[i].sensorRadius = sensors[i].sensorRadius;
 			for (int j = 0 ; j < networkSize ; j++)
 			{
@@ -151,7 +160,7 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sens
 		return numberOfClusteredNodes;
 	}
 
-double CH_3D_CO::  evaluateCoverageRedundancy(){
+double CH_3D_CO:: evaluateCoverageRedundancy(){
 
   int totalCoverage = 0;
   int sizeOfCH  = clusterHeads.size();
@@ -169,17 +178,20 @@ double CH_3D_CO::  evaluateCoverageRedundancy(){
       if(ele < coverageMappingMatrix.size()){
 	auto coveredTinSet = coverageMappingMatrix[ele];
 	if(coveredTinSet.size() > 0 ){
-	  double denominator = 0;
-	  double numerator  = 0;
+	  double denominator = 0.0;
+	  double numerator  = 0.0;
 	  for( auto & coveredTin:  coveredTinSet ) {
 	    numerator ++;
 	     int coveredTimes  = coverageMatrix[coveredTin];
-	     if(coveredTimes < 1 ){
-	       throw "Calculaton error, at least covered by self";
+	     if(coveredTimes < 1 || coveredTimes >800){
+	       
+	       cout<<" Calculaton error, at least covered by self"<<endl;
+	       exit(-1);
 	     } else {
-	       denominator += 1 / coveredTimes ;
+	       denominator += 1.0 / (double)coveredTimes ;
 	     }
 	   }
+	  assert(denominator != 0.0);
 	  coverageRedun += numerator/ denominator;
 	}else{
 	  //does nothing,  no covertin, no coverage redundancy;
@@ -211,8 +223,8 @@ double CH_3D_CO::  evaluateCoverageRedundancy(){
     }
 
 }
-  int outsideNumerator = sizeOfCH ==0? coverageMatrix.size() : sizeOfCH;
-    return outsideNumerator / coverageRedun;
+  int outsideNumerator = (sizeOfCH ==0)? coverageMatrix.size() : sizeOfCH;
+  return (double)outsideNumerator / coverageRedun;
 
 };
 	double CH_3D_CO :: getCompactness()
@@ -298,6 +310,7 @@ double CH_3D_CO::  evaluateCoverageRedundancy(){
 	      double compactness = getCompactness();
 	      double avgRemainingEnergy = totalEnergy;
 	      double coverRedundancy = evaluateCoverageRedundancy();
+	      assert(coverRedundancy != 0.0); //l310
 	      double numberOfUnClusteredNodes = networkSize - cnOfClusteredNodes;
 	      // minimize the no of chs
 	      solution->setObjective(0,noOfCHs);

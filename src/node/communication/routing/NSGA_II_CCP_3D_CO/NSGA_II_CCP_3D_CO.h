@@ -184,7 +184,7 @@ public:
 	      os << p <<" ";
 	      i++;
 	    }
-	  trace() << "UU " << os.str();
+	  // trace() << "UU " << os.str();
 	};
 
 	void initializeMatrices();		
@@ -194,8 +194,9 @@ public:
 	void generateLNSMPathLossMap();
 	void updateAdjacencyMatrix();
 	void updateCoverageMatrix();
+	double evaluateCoverageRedundancy();
 	void updateTinMatrix();
-	void updateSingleCoverage(vector<vector<int>> &board, SensorInfo sen) ;
+	void updateSingleCoverage(vector<vector<int>> &board, const SensorInfo sen) ;
 	void processBufferedPacket();
 	string returnConfiguration();
 	void sendAggregate();
