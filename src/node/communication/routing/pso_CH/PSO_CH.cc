@@ -93,16 +93,16 @@ void PSO_CH :: updateSensorInfo(){
 		y1 = l->getLocation().y;
 		z1 = l->getLocation().z;
 
-  		//dzhang no time, so just plugin in.
-  assert(std::abs(sensingRange - 20) < 0.001);
-  SensorInfo tmp_sen = SensorInfo();
-  tmp_sen.id = i;
-  tmp_sen.x = x1;
-  tmp_sen.y = y1;
-  tmp_sen.z = z1;
-  tmp_sen.sensorRadius = sensingRange;
-  Sensors.push_back(tmp_sen);
-
+  		
+		assert(std::abs(sensingRange - 20) < 0.001);
+		SensorInfo tmp_sen = SensorInfo();
+		tmp_sen.id = i;
+		tmp_sen.x = x1;
+		tmp_sen.y = y1;
+		tmp_sen.z = z1;
+		tmp_sen.sensorRadius = sensingRange;
+		Sensors.push_back(tmp_sen);
+  
 	}
 
 };

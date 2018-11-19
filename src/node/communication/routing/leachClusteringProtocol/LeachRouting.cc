@@ -32,6 +32,7 @@ void LeachRouting::startup()
 	dataPacketSize = par("dataPacketSize");
 	applicationID = par("applicationID").stringValue(); 
 	numberOfRounds = par("numberOfRounds");
+	sensingRange = par("sensingRange");
 	percentage = percentage /100;
 	/*--- Class parameters ---*/
 	CHcandidates.clear();
@@ -55,10 +56,75 @@ void LeachRouting::startup()
 	declareOutput("Number of unclustered nodes");
       	declareOutput("Average number of unclustered nodes per round");
 	declareOutput("Number of data packets received at BS");
+	declareOutput("Coverage Redundancy of CHs per round");
+	
+	//dzhang add
+	Sensors.clear();
+	DEM.clear();
+
+	//	DEM = vector<vector>>()
 
 	readXMLparams();
+	
+	  DEM = vector<vector<double>>(20, vector<double> (20,0.0));
+	   loadDEMData();
+	   updateSensorInfo();
+
+
 	if(!isSink) setTimer(START_ROUND, 0.0);
 }
+
+
+
+void LeachRouting :: updateSensorInfo(){
+  cModule *n, *c;
+  double x1,y1,z1;
+  ResourceManager *r;
+  VirtualMobilityManager *l ;
+ 	for (int i = 0 ; i < networkSize ; i++)
+	{
+		n = theSNModule->getSubmodule("node",i);
+		r = check_and_cast<ResourceManager*>(n->getSubmodule("ResourceManager"));
+		l = check_and_cast<VirtualMobilityManager*>(n->getSubmodule("MobilityManager"));
+		c = check_and_cast<cModule*>(n->getSubmodule("Communication")->getSubmodule("Routing"));
+
+		x1 = l->getLocation().x;
+		y1 = l->getLocation().y;
+		z1 = l->getLocation().z;
+
+  		//dzhang no time, so just plugin in.
+  assert(std::abs(sensingRange - 20) < 0.001);
+  SensorInfo tmp_sen = SensorInfo();
+  tmp_sen.id = i;
+  tmp_sen.x = x1;
+  tmp_sen.y = y1;
+  tmp_sen.z = z1;
+  tmp_sen.sensorRadius = sensingRange;
+  Sensors.push_back(tmp_sen);
+
+	}
+
+};
+void LeachRouting :: loadDEMData()
+{
+		ifstream elevationsFile;
+ 		elevationsFile.open("elevations.txt");
+		double elevation = 0.0;
+
+		for (int i = 19 ; i >= 0 ; i--)
+		{
+			for (int j = 19 ; j >= 0 ; j--)
+			{
+			     elevationsFile >> elevation;
+			     DEM[i][j] =  elevation/10;
+			     //trace() << "DEM[" << i <<"]["<<j<<"] = "<<  DEM[i][j] << "\n";
+			}
+                }
+
+		 elevationsFile.close();
+};
+
+
 
 void LeachRouting::fromApplicationLayer(cPacket *pkt, const char *destination)
 {	
@@ -214,6 +280,11 @@ void LeachRouting::timerFiredCallback(int index)
 				isCH=true;
 				double c = 1;
 				double numRounds = numberOfRounds;
+
+				WCoverage * coverageSolver = new WCoverage(Sensors,DEM);
+				double singleCHCoverage = coverageSolver->evaluateSingleCoverRedun(self);
+				
+				collectOutput("Coverage Redundancy of CHs per round","",singleCHCoverage);
 				collectOutput("Number of Cluster Heads","",1);
 				collectOutput("Average Number of Cluster Heads per Round","",c/numRounds);
 			}

@@ -15,6 +15,34 @@ WCoverage::WCoverage(const vector<SensorInfo> &sensors,
   // coveringMappingMatrix = vector<(Sensors.size(), vector<int> ());
   
 }
+
+double WCoverage:: evaluateSingleCoverRedun(const int chs_id){
+  double coverageRedun = 0.0;
+  int ele = chs_id;
+      if(ele < coveringMappingMatrix.size()){
+	auto coveredTinSet = coveringMappingMatrix[ele];
+	if(coveredTinSet.size() > 0 ){
+	  double denominator = 0;
+	  double numerator  = 0;
+	  for( auto & coveredTin:  coveredTinSet ) {
+	    numerator ++;
+	     int coveredTimes  = coverageMatrix[coveredTin];
+	     if(coveredTimes < 1 ){
+	       throw "Calculaton error, at least covered by self";
+	     } else {
+	       denominator += 1.0 / (double)coveredTimes ;
+	     }
+	   }
+	  coverageRedun += numerator/ denominator;
+	}else{
+	  //does nothing,  no covertin, no coverage redundancy;
+	}
+      }else {
+	throw "EA setting problem: sensor id exceed coveragemappingmatrix length!";
+      }
+      //assert( coverageRedun != 0.0);
+      return coverageRedun;
+}
 double WCoverage:: evaluateCoverageRedun(const vector<int> &chs_id)
 {
   vector<int> clusterHeads = chs_id;
@@ -76,9 +104,9 @@ double WCoverage:: evaluateCoverageRedun(const vector<int> &chs_id)
 	}
     }
 
-}
+  }
   int outsideNumerator = (sizeOfCH ==0)? coverageMatrix.size() : sizeOfCH;
-  return (double)outsideNumerator / coverageRedun;
+  return (double) coverageRedun ;
 
 
 };

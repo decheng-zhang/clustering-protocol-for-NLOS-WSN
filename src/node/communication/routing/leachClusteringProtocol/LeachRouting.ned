@@ -30,7 +30,7 @@ parameters:
 	double percentage;	
 	double roundLength @unit(s);	
 	double slotLength;
-
+	double sensingRange;
 	//routing layer packet sizes
 	int advPacketSize = default (9); // Type + Source + Destination = 9 bytes
 	int joinPacketSize = default (9);

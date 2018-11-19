@@ -1055,7 +1055,7 @@ double NSGA_II_CCP_3D_CO::  evaluateCoverageRedundancy(){
 
 }
   int outsideNumerator = (sizeOfCH ==0)? coverageMatrix.size() : sizeOfCH;
-    return outsideNumerator / coverageRedun;
+    return coverageRedun;
 
 }
 string NSGA_II_CCP_3D_CO :: returnConfiguration()

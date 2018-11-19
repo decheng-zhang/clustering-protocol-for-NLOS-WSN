@@ -118,8 +118,9 @@ class WCoverage {
 	WCoverage( const vector<SensorInfo> & sensors,
 		   const  vector<vector<double> > & dem, int size_of_tin =20, int width = 100
 		     );
-void updateCoverageMatrix();
-// void updateContext();
+	void updateCoverageMatrix();
+	// void updateContext();
+	double  evaluateSingleCoverRedun(const int chs_id);
 	double evaluateCoverageRedun(const vector<int> &chs_id);
 	~WCoverage(){
 	  Sensors.clear();

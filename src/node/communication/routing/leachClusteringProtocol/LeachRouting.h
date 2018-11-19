@@ -33,7 +33,7 @@
 #include "LeachRoutingPacket_m.h"
 #include "ApplicationPacket_m.h"
 #include "NoMobilityManager.h"
-
+#include <WCoverage.h>
 
 using namespace std;
 
@@ -85,21 +85,37 @@ private:
 	cModule *theSNModule;
 	int networkSize;
 
+	
+	
 	vector<RoutingPacket> bufferAggregate;
 	vector<int> powers;
 	queue <cPacket *> tempTXBuffer;
 	vector <int> clusterMembers;
 	list <CHInfo> CHcandidates;
 
+	//dzhang add 
+	vector<vector<double> > coverageMatrix;	
+	vector<SensorInfo> Sensors;
+	double sensingRange;
+	vector<vector<double>> DEM;
+
+
+	
 protected:
 
 	void startup();
 	void finishSpecific();
 	void fromApplicationLayer(cPacket *, const char *);
+	
 	void fromMacLayer(cPacket *, int, double, double);
 	void timerFiredCallback(int);
 	void processBufferedPacket();
-	
+
+	//dzhang add
+	void loadDEMData();
+	void updateSensorInfo();
+
+
 	void sendAggregate();
 	void setPowerLevel(double);
 	void setStateSleep();
