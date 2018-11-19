@@ -11,6 +11,7 @@ WCoverage::WCoverage(const vector<SensorInfo> &sensors,
   Tin_Matrix.clear();
   updateTinMatrix();
   updateCoverageMatrix();
+  testingFun();
   // coveringMappingMatrix = vector<(Sensors.size(), vector<int> ());
   
 }
@@ -184,10 +185,10 @@ void WCoverage :: bfs (vector<vector<int>> &board, int row, int col, double coor
   auto out_of_radius = [&](const state &s  ) {
     
     const double cellwidth =(double) width / (double) NO_TIN_D; 
-    const double x_min_distance =   std::min(abs((s.second) * cellwidth - coorx) 
-					     , abs((s.second+1) * cellwidth - coorx));
-    const double y_min_distance =   std::min(abs((s.first) * cellwidth - coory) 
-					     , abs((s.first+1) * cellwidth - coory));
+    const double x_min_distance =   std::min(std::abs((s.second) * cellwidth - coorx) 
+					     , std::abs((s.second+1) * cellwidth - coorx));
+    const double y_min_distance =   std::min(std::abs((s.first) * cellwidth - coory) 
+					     , std::abs((s.first+1) * cellwidth - coory));
     return (x_min_distance >= sen_range)||(y_min_distance >= sen_range);
   };
 

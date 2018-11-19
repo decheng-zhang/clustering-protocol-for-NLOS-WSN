@@ -69,7 +69,7 @@ void NSGA_II_CCP_3D_CO::startup()
 		generateLNSMPathLossMap();
 		updateCoverageMatrix();
 		updateAdjacencyMatrix();
-		//testingFun();
+		testingFun();
     	}
 	  readXMLparams();
 	

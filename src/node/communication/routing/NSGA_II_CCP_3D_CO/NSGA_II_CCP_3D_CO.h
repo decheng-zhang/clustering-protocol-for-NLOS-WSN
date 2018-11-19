@@ -177,13 +177,16 @@ public:
         void runCDDP();
 	void testingFun(){
 	  int i=0;
-	  ostringstream os;
+	  ofstream os;
+	  os.open("nsga-cmap.txt"); 
+	  ;
 	  for(auto p : coverageMatrix)
 	    {
 	      if(i%40 ==0) os<< "\n";
 	      os << p <<" ";
 	      i++;
 	    }
+	  os.close();
 	  // trace() << "UU " << os.str();
 	};
 

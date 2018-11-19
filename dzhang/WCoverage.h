@@ -1,14 +1,14 @@
 #ifndef _WCOVERAGE_H_
 #define _WCOVERAGE_H_
 
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdlib.h>
 #include <utility>
-#include <math.h>
+#include <cmath>
 #include <queue>
 #include <vector>
 #include <assert.h>
-//#include <iostream>
+#include <fstream>
 
 using namespace std;
     struct coor3d { 
@@ -95,6 +95,21 @@ class WCoverage {
 	  rst[1] = sqtId *2 +1;
 	  return rst;
 	}
+	void testingFun(){
+	  int i=0;
+	  ofstream os;
+	  os.open("wco-pso-cmap.txt"); 
+	  ;
+	  for(auto p : coverageMatrix)
+	    {
+	      if(i%40 ==0) os<< "\n";
+	      os << p <<" ";
+	      i++;
+	    }
+	  os.close();
+	  // trace() << "UU " << os.str();
+	};
+
 
 
 
