@@ -14,10 +14,10 @@ parameters:
 
 	double energy;
 	string networkInformation = "";
-
+	
 	int numOfCHs;
 	int epoch;
-
+	double sensingRange;
 	int numOfNbrs = 0;
 	int CH_Frequencey = 0;
         string candidates = "";

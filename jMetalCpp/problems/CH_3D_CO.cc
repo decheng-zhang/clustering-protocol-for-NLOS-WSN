@@ -1,9 +1,10 @@
 #include <CH_3D_CO.h>
-#include <assert.h>
+//#include <assert.h>
+//class SensorInfo;
 	CH_3D_CO :: CH_3D_CO(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors)
 	{
 		networkSize = sensors.size();
-		numberOfObjectives_  = 4;
+		numberOfObjectives_  = 5;
 		numberOfConstraints_ = 0;
 		
 		problemName_         = "CH_3D_CO";
@@ -42,15 +43,12 @@
   		for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
 
 	}
+
 	
 CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM, 
 		     const vector<SensorInfo> &sensors, 
 		     vector<int> &coverageM, 
-		     vector<vector<int>> &coverageMapping
-		     )
-	{
-
-
+		     vector<vector<int>> &coverageMapping) {
 		networkSize = sensors.size();
 		numberOfObjectives_  = 5;
 		numberOfConstraints_ = 0;
@@ -58,7 +56,9 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM,
 		problemName_         = "CH_3D_CO";
 		coverageMappingMatrix = coverageMapping;
 		numberOfVariables_   = networkSize;
-		
+		adjacencyMatrix.clear();
+		clusterHeads.clear();
+		Sensors = sensors;
 		for (int i = 0 ; i < networkSize ; i++)
 		{
 			vector<double> r;
@@ -68,7 +68,7 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM,
 			}
 			clusterHeads.push_back(0);
 			adjacencyMatrix.push_back(r);
-			Sensors.push_back(SensorInfo());
+			//Sensors.push_back(SensorInfo());
 		}
 
 		for (int i = 0 ; i < networkSize; i++)
@@ -91,10 +91,10 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM,
 
 		solutionType_ = new BinarySolutionType(this);
 		length_       = new int[numberOfVariables_];
-  		for (int i = 0; i < numberOfVariables_; i++) length_  [i] = 1 ;
+  		for (int i = 0; i < numberOfVariables_; i++) length_[i] = 1 ;
 
-	}
-          double CH_3D_CO :: _calOverlayArea(SensorInfo l , SensorInfo r) {
+};
+double CH_3D_CO :: _calOverlayArea(SensorInfo l , SensorInfo r) {
 	      double distance = sqrt(pow((l.x-r.x),2) + pow((l.y-r.y),2) + pow((l.z-r.z), 2) );
 	      double large =0.0, small = 0.0;
 
@@ -118,13 +118,10 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM,
 	      } else {
 		return 0;    
 	      }
+};
 
-
-
-
-	}
-	double CH_3D_CO :: clusterTheNetwork()
-	{
+double CH_3D_CO :: clusterTheNetwork()
+{
 		network.clear();
 		int numberOfClusteredNodes = 0;
 		
@@ -158,8 +155,9 @@ CH_3D_CO :: CH_3D_CO(vector< vector<double>> &adjacencyM,
 		}
 
 		return numberOfClusteredNodes;
-	}
+};
 
+	
 double CH_3D_CO:: evaluateCoverageRedundancy(){
 
   int totalCoverage = 0;
@@ -191,7 +189,7 @@ double CH_3D_CO:: evaluateCoverageRedundancy(){
 	       denominator += 1.0 / (double)coveredTimes ;
 	     }
 	   }
-	  assert(denominator != 0.0);
+	  //  assert(denominator != 0.0);
 	  coverageRedun += numerator/ denominator;
 	}else{
 	  //does nothing,  no covertin, no coverage redundancy;
@@ -227,7 +225,7 @@ double CH_3D_CO:: evaluateCoverageRedundancy(){
   return (double)outsideNumerator / coverageRedun;
 
 };
-	double CH_3D_CO :: getCompactness()
+double CH_3D_CO :: getCompactness()
 	{
 		double maxRSSI = -100;
 		double maxCompactness = -100;
@@ -270,18 +268,18 @@ double CH_3D_CO:: evaluateCoverageRedundancy(){
 		}
 		if (maxCompactness == -100) maxCompactness = 100;
 		return maxCompactness;
- 	}
+ 	};
 
-	CH_3D_CO :: ~CH_3D_CO() 
-	{
+CH_3D_CO :: ~CH_3D_CO() 
+{
 		delete []length_ ;
   		delete solutionType_ ;
                 adjacencyMatrix.clear();
-  	}
+};
 
 	
-	void CH_3D_CO :: evaluate(Solution *solution) 
-	{
+void CH_3D_CO :: evaluate(Solution *solution) 
+{
 	     double totalEnergy = 0;
 	    
 	     uncover = 0;
@@ -301,8 +299,8 @@ double CH_3D_CO:: evaluateCoverageRedundancy(){
 		   	totalEnergy+= 18720 / Sensors[i].energy;
 			clusterHeads.push_back(i);
 
-                }
-	    }
+		 }
+	     }
 	
 	      double noOfCHs = clusterHeads.size();
 	      if (noOfCHs == 0) noOfCHs = networkSize;
@@ -310,7 +308,7 @@ double CH_3D_CO:: evaluateCoverageRedundancy(){
 	      double compactness = getCompactness();
 	      double avgRemainingEnergy = totalEnergy;
 	      double coverRedundancy = evaluateCoverageRedundancy();
-	      assert(coverRedundancy != 0.0); //l310
+	      //      assert(coverRedundancy != 0.0); //l310
 	      double numberOfUnClusteredNodes = networkSize - cnOfClusteredNodes;
 	      // minimize the no of chs
 	      solution->setObjective(0,noOfCHs);
@@ -324,6 +322,6 @@ double CH_3D_CO:: evaluateCoverageRedundancy(){
 	      //minimize redundant coverage ratio
 	      solution->setObjective(4,coverRedundancy);
 	  
-	  }
+};
 
 

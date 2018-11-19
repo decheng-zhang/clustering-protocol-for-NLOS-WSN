@@ -1,4 +1,4 @@
-#include "NSGA_II_CCP_3D_CO.h"
+#include <NSGA_II_CCP_3D_CO.h>
 #include <assert.h>
 Define_Module(NSGA_II_CCP_3D_CO);
 
@@ -68,7 +68,7 @@ void NSGA_II_CCP_3D_CO::startup()
 		updateVisibilityMatrix();
 		generateLNSMPathLossMap();
 		updateCoverageMatrix();
-		//updateAdjacencyMatrix();
+		updateAdjacencyMatrix();
 		//testingFun();
     	}
 	  readXMLparams();
@@ -226,7 +226,8 @@ void NSGA_II_CCP_3D_CO :: initializeMatrices()
 			PLD.push_back(r);
 			adjacencyMatrix.push_back(r);
 			visibilityMatrix.push_back(r);
-			Sensors.push_back(SensorInfo());
+			SensorInfo tem_sen;
+			Sensors.push_back(tem_sen);
         	}
 
 		for (int i = 0 ; i < NO_TIN_D*NO_TIN_D *2 ; i++)
@@ -857,12 +858,7 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 	
 
 		  //CH_3D_CO * p = // new CH_3D_CO(adjacencyMatrix,Sensors);
-		ofstream myfiled;
-		myfiled.open("filedzhang.txt");
-		for(int i = 0;i< Sensors.size();i++){
-		  myfiled << "sensor-radius- id: "<< Sensors[i].id<< "radius: "<<Sensors[i].sensorRadius <<endl;
-	  }
-		myfiled.close();
+
 	CH_3D_CO * p =  new CH_3D_CO(adjacencyMatrix, Sensors, coverageMatrix,coveringMappingMatrix);
 		problem = p;
 			
@@ -913,7 +909,7 @@ void NSGA_II_CCP_3D_CO :: timerFiredCallback(int index)
 		}
 		
 	    	double numberOfCHs = clusterHeads.size();
-		trace()<< "Number of CHs per round " << numberOfCHs << "\n";
+		trace()<< "Number of CHs per round" << numberOfCHs << "\n";
 		
 		collectOutput("Average number of CHs per round","",numberOfCHs/numberRounds);
 		double redundancyOfCHsInThisRound = evaluateCoverageRedundancy();

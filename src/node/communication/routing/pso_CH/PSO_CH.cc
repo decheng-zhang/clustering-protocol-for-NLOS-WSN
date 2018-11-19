@@ -1,5 +1,5 @@
 #include "PSO_CH.h"
-
+#include <assert.h>
 Define_Module(PSO_CH);
 
 void PSO_CH::startup()
@@ -15,7 +15,7 @@ void PSO_CH::startup()
 	dataPacketSize = par("dataPacketSize");
 	numberOfRounds = par("numberOfRounds");
 	applicationID = par("applicationID").stringValue(); 
-	
+         sensingRange = par("sensingRange");
 	/*--- Class parameters ---*/
 	roundNumber=0;
 
@@ -36,11 +36,11 @@ void PSO_CH::startup()
 	clusterLength = 0;
 
 	noLiveNodes = 0;
-	
-	//srand (time(NULL));
 
 	theSNModule = getParentModule()->getParentModule()->getParentModule();
 	networkSize = getParentModule()->getParentModule()->getParentModule()->par("numNodes");
+	
+
 	initialEnergy = getParentModule()->getParentModule()->getSubmodule("ResourceManager")->par("initialEnergy");
 	
 	double simTime = atof(ev.getConfig()->getConfigValue("sim-time-limit")); 
@@ -55,7 +55,16 @@ void PSO_CH::startup()
 		}
 		adjacencyMatrix.push_back(r);
 	}
+	Sensors.clear();
+	DEM.clear();
+	if(isSink){
 
+	   DEM = vector<vector<double>>(20, vector<double> (20,0.0));
+	   loadDEMData();
+	   //Sensors = vector<SensorInfo> (100);
+	   //srand (time(NULL));
+	   updateSensorInfo();
+	}
 	declareOutput("PDR");
 	declareOutput("Convergence");
 	declareOutput("Average number of CHs per round");
@@ -63,10 +72,58 @@ void PSO_CH::startup()
       	declareOutput("Average number of unclustered nodes per round");
 	collectOutput("Average number of active nodes per round");
 	declareOutput("Number of data packets received at BS");
+	declareOutput("Coverage Redundancy of CHs per round");
 	
 	readXMLparams();
 	setTimer(START_ROUND,0.0);
-}
+};
+void PSO_CH :: updateSensorInfo(){
+  cModule *n, *c;
+  double x1,y1,z1;
+  ResourceManager *r;
+  VirtualMobilityManager *l ;
+ 	for (int i = 0 ; i < networkSize ; i++)
+	{
+		n = theSNModule->getSubmodule("node",i);
+		r = check_and_cast<ResourceManager*>(n->getSubmodule("ResourceManager"));
+		l = check_and_cast<VirtualMobilityManager*>(n->getSubmodule("MobilityManager"));
+		c = check_and_cast<cModule*>(n->getSubmodule("Communication")->getSubmodule("Routing"));
+
+		x1 = l->getLocation().x;
+		y1 = l->getLocation().y;
+		z1 = l->getLocation().z;
+
+  		//dzhang no time, so just plugin in.
+  assert(std::abs(sensingRange - 20) < 0.001);
+  SensorInfo tmp_sen = SensorInfo();
+  tmp_sen.id = i;
+  tmp_sen.x = x1;
+  tmp_sen.y = y1;
+  tmp_sen.z = z1;
+  tmp_sen.sensorRadius = sensingRange;
+  Sensors.push_back(tmp_sen);
+
+	}
+
+};
+void PSO_CH :: loadDEMData()
+{
+		ifstream elevationsFile;
+ 		elevationsFile.open("elevations.txt");
+		double elevation = 0.0;
+
+		for (int i = 19 ; i >= 0 ; i--)
+		{
+			for (int j = 19 ; j >= 0 ; j--)
+			{
+			     elevationsFile >> elevation;
+			     DEM[i][j] =  elevation/10;
+			     //trace() << "DEM[" << i <<"]["<<j<<"] = "<<  DEM[i][j] << "\n";
+			}
+                }
+
+		 elevationsFile.close();
+};
 
 void PSO_CH :: fromApplicationLayer(cPacket *pkt, const char *destination)
 {	
@@ -98,7 +155,7 @@ void PSO_CH :: fromApplicationLayer(cPacket *pkt, const char *destination)
 	}
 
 	
-}
+};
 
 void PSO_CH :: fromMacLayer(cPacket *pkt, int macAddress, double rssi, double lqi)
 {
@@ -152,7 +209,7 @@ void PSO_CH :: fromMacLayer(cPacket *pkt, int macAddress, double rssi, double lq
 			break;	
 		}
 	}
-}
+};
 
 
 void PSO_CH :: timerFiredCallback(int index)
@@ -166,7 +223,7 @@ void PSO_CH :: timerFiredCallback(int index)
 		par("numOfNbrs") = 0;
 		par("energy") = initialEnergy - resMgrModule->getSpentEnergy();
 	
-		//trace() << "PSO_CH - START ROUND NO. " << roundNumber << "\n";
+		trace() << "PSO_CH - START ROUND NO. " << roundNumber << "\n";
 		setStateRx();
 
 		if (getTimer(START_SLOT) != 0) 
@@ -284,12 +341,18 @@ void PSO_CH :: timerFiredCallback(int index)
 		  }
  	   	  trace() << "\n";
 
+		  //Dzhang coverage solver
+		  WCoverage * coverageSolver = new WCoverage( Sensors, DEM);
+		  double  redundancyOfCHsInThisRound =coverageSolver->evaluateCoverageRedun(ClusterHeads);
+		  delete coverageSolver;
+		  collectOutput("Coverage Redundancy of CHs per round", "", redundancyOfCHsInThisRound );
+
 		  string configuration = p->returnConfiguration(ClusterHeads);
 		  par("networkInformation") = configuration;
 
 		  trace() << " Network Info " << configuration << "\n";
 
-		  delete mutation;
+		  //		  delete mutation;
 		  delete population;
 		  delete algorithm;
 		 
@@ -400,7 +463,7 @@ void PSO_CH :: initProtocol()
 
 		trace()<<"Sensor " << i << " x = " << x1 << " y = "<< y1 << " z1 = "<< z1 << "\n";
 
-		for (int j = 0 ; (j < networkSize) && (!distFar) ; j++)
+		for (int j = 0 ; (j < networkSize) & (!distFar) ; j++)
 		{
 
 			n1 = theSNModule->getSubmodule("node",j);
@@ -504,7 +567,7 @@ void PSO_CH :: initProtocol()
 
 void PSO_CH :: runCDDP()
 {
-double nonClustered = 0;
+  double nonClustered = 0;
 
   	cModule *tmpModule =check_and_cast<cModule*> (theSNModule->getSubmodule("node",0)->getSubmodule("Communication")->getSubmodule("Routing"));
 	
@@ -700,7 +763,9 @@ void PSO_CH :: readXMLparams()
 
 void PSO_CH :: finishSpecific()
 {
-	
+  DEM.clear();
+  Sensors.clear();
+  
 }
 
 

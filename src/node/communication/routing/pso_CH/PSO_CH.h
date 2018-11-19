@@ -27,6 +27,8 @@
 #include <StandardStudyExecutionSO.h>
 #include <PSOProblem1.h>
 #include <boost/tokenizer.hpp>
+#include <WCoverage.h>
+//#include <CH_3D_CO.h>
 //#include <ExperimentExecution.h>
 #include <string>
 
@@ -83,12 +85,14 @@ private:
 	int tdmaPacketSize;
 	int dataPacketSize;
 	int joinPacketSize;
-	
+	 
 	
 	double maxPower;
 	double sensibility;
 	double aggrConsumption;
+	
 
+	
         double slotLength;
 	double percentage;
 	double roundLength;
@@ -101,7 +105,7 @@ private:
 	int width;
 	int height;
 	vector<vector<double> > coverageMatrix;	
-
+	vector<SensorInfo> Sensors;
 	double totalPackets;
 
 	int roundNumber;
@@ -135,8 +139,8 @@ private:
 	vector <int> clusterMembers;
 	vector <nodeInfo> clusterHeads;
 	queue <cPacket *> tempTXBuffer;
-
-      	
+	vector<vector<double>> DEM;
+      	void updateSensorInfo();
 public:
 
 	void startup();
@@ -146,6 +150,7 @@ public:
 	void timerFiredCallback(int);
 	void initProtocol();
         void runCDDP();
+	void loadDEMData();
 	void processBufferedPacket();
 	void sendAggregate();
 	void setPowerLevel(double);
