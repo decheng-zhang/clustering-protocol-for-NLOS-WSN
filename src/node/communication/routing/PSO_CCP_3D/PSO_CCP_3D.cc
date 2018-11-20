@@ -1,5 +1,5 @@
 #include "PSO_CCP_3D.h"
-
+#include <assert.h>
 Define_Module(PSO_CCP_3D);
 
 void PSO_CCP_3D::startup()
@@ -64,7 +64,7 @@ void PSO_CCP_3D::startup()
 		updateSensorsElevation();
 		updateVisibilityMatrix();
 		generateLNSMPathLossMap();
-		//updateAdjacencyMatrix();
+		//		updateAdjacencyMatrix();
          	
     	}
 	  readXMLparams();
@@ -82,6 +82,7 @@ void PSO_CCP_3D::startup()
 
 void PSO_CCP_3D :: initializeMatrices()
 {
+  Sensors.clear();
 		for (int i = 0 ; i < networkSize ; i++)
 		{
 			vector<double> r;
@@ -93,7 +94,8 @@ void PSO_CCP_3D :: initializeMatrices()
 			PLD.push_back(r);
 			adjacencyMatrix.push_back(r);
 			visibilityMatrix.push_back(r);
-			Sensors.push_back(SensorInfo());
+			SensorInfo tm;
+			Sensors.push_back(tm);
         	}
 
 		for (int i = 0 ; i < numOfCells ; i++)
@@ -923,11 +925,13 @@ Solution * PSO_CCP_3D :: findBestCompromiseSolution(SolutionSet *set)
 			double membership;
 
 			double objective =  solution->getObjective(j);
-		
-			if (objective <= minObjectives[j] ) membership = 1;
+			//assert(!std::isinf(objective));
+			  if(minObjectives[j] == maxObjectives[j]) membership = 0;
+			  else if (std::isinf(minObjectives[j]) || std::isinf(maxObjectives[j])) membership = 0;
+			  else if (objective <= minObjectives[j] ) membership = 1;
 			else if (objective >= maxObjectives[j] ) membership = 0;
 			else membership = (maxObjectives[j] - objective) / (maxObjectives[j] - minObjectives[j]);
-
+			  //assert(!std::isnan(membership));
 			totalMembership+= membership;
 						
 		}
@@ -937,14 +941,14 @@ Solution * PSO_CCP_3D :: findBestCompromiseSolution(SolutionSet *set)
 	}
 	
 
-	int index;
+	int index=-1;
 	double maxA = -1000;
 
 	for (int i = 0 ; i < set->size() ; i++)
 	{
 		achievement[i] = achievement[i] / totalAchievement;
 
-		if (achievement[i] > maxA)
+		if (achievement[i] -maxA > 0.0)
 		{
 			maxA = achievement[i];
 			index = i;
@@ -952,6 +956,7 @@ Solution * PSO_CCP_3D :: findBestCompromiseSolution(SolutionSet *set)
 	
 	}
 
+	//	assert(index != -1);
 	Solution *best = set->get(index);
 	return best;
 }
@@ -1135,6 +1140,7 @@ void PSO_CCP_3D::finishSpecific()
 	Sensors.clear();
 	myfile.close();
 	visibilityMatrix.clear();
+	adjacencyMatrix.clear();
 }
 
 

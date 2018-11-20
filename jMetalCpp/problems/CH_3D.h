@@ -46,7 +46,7 @@ struct SensorInfo
 	double y;
 	double z;
 	double energy;
-	
+SensorInfo():id(0),x(0),y(0),z(0),energy(0){};
 };
 
 class CH_3D : public Problem
@@ -72,7 +72,7 @@ class CH_3D : public Problem
         public:
 	
 
-	CH_3D(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors);
+	CH_3D(const vector< vector<double> > & adjacencyM, const vector<SensorInfo> &sensors);
 		
 	~CH_3D();
 

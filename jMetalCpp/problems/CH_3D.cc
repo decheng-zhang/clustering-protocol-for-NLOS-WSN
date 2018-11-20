@@ -1,15 +1,17 @@
 #include <CH_3D.h>
 
-	CH_3D :: CH_3D(vector< vector<double>> adjacencyM, vector<SensorInfo> sensors)
+	CH_3D :: CH_3D(const vector< vector<double> > &adjacencyM,const vector<SensorInfo> &sensors)
 	{
 		networkSize = sensors.size();
 		numberOfObjectives_  = 4;
 		numberOfConstraints_ = 0;
-		
+		//	Sensors.clear();
+		clusterHeads.clear();
+		adjacencyMatrix.clear();
 		problemName_         = "CH_3D";
 			
 		numberOfVariables_   = networkSize;
-		
+		Sensors.reserve(networkSize);
 		for (int i = 0 ; i < networkSize ; i++)
 		{
 			vector<double> r;
@@ -19,6 +21,7 @@
 			}
 			clusterHeads.push_back(0);
 			adjacencyMatrix.push_back(r);
+			
 			Sensors.push_back(SensorInfo());
 		}
 
@@ -129,6 +132,7 @@
 		delete []length_ ;
   		delete solutionType_ ;
                 adjacencyMatrix.clear();
+		Sensors.clear();
   	}
 
 	

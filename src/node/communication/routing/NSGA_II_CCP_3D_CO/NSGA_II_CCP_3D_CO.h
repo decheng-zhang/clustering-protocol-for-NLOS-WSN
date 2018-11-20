@@ -5,11 +5,11 @@
 #include <vector>
 #include <omnetpp.h>
 #include <algorithm>
-#include <string>
-#include <math.h>
-#include <stdlib.h>
+//#include <string>
+#include <cmath>
+//#include <stdlib.h>
 #include <utility>
-#include <stdio.h>
+//#include <stdio.h>
 #include <iostream>
 #include <sstream>
 #include "ResourceManager.h"
