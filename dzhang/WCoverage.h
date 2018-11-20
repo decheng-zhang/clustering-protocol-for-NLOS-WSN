@@ -28,7 +28,7 @@ using namespace std;
     };
     struct SensorInfo
     {
-    SensorInfo():id(0),x(0),y(0),z(0),energy(0),sensorRadius(0){}
+    SensorInfo():id(0),x(0),y(0),z(0),energy(0),sensorRadius(20){}
       //          SensorInfo(int id_, double x_, double y_, double z_, double se_r_): id(id_), x(x_), y(y_), z(z_), energy(0.0),sensorRadius(se_r_){};
     	    int id;
     	    double x;

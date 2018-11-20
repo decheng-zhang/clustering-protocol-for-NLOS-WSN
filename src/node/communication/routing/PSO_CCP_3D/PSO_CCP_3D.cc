@@ -76,6 +76,7 @@ void PSO_CCP_3D::startup()
       	  declareOutput("Average number of unclustered nodes per round");
 	  declareOutput("Average number of CHs per round");
 	  declareOutput("Number of data packets received at BS");
+	  declareOutput("Coverage Redundancy of CHs per round");
 
 	 setTimer(START_ROUND,0.0);
 }
@@ -95,6 +96,7 @@ void PSO_CCP_3D :: initializeMatrices()
 			adjacencyMatrix.push_back(r);
 			visibilityMatrix.push_back(r);
 			SensorInfo tm;
+			tm.sensorRadius = sensingRange;
 			Sensors.push_back(tm);
         	}
 
@@ -757,6 +759,14 @@ void PSO_CCP_3D :: timerFiredCallback(int index)
 	    	double numberOfCHs = clusterHeads.size();
 		trace()<< "Number of CHs per round " << numberOfCHs << "\n";
 		collectOutput("Average number of CHs per round","",numberOfCHs/numberRounds);
+
+
+		  //Dzhang coverage solver
+		  WCoverage * coverageSolver = new WCoverage( Sensors, DEM);
+		  double  redundancyOfCHsInThisRound =coverageSolver->evaluateCoverageRedun(clusterHeads);
+		  delete coverageSolver;
+		  collectOutput("Coverage Redundancy of CHs per round", "", redundancyOfCHsInThisRound );
+
 
 		string networkStatus = returnConfiguration();		
 		par("networkInformation") = networkStatus;

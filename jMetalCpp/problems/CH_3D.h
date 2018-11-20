@@ -38,16 +38,16 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <string>
-
-struct SensorInfo
-{
-	int id;
-	double x;
-	double y;
-	double z;
-	double energy;
-SensorInfo():id(0),x(0),y(0),z(0),energy(0){};
-};
+#include <WCoverage.h>
+/* struct SensorInfo */
+/* { */
+/* 	int id; */
+/* 	double x; */
+/* 	double y; */
+/* 	double z; */
+/* 	double energy; */
+/* SensorInfo():id(0),x(0),y(0),z(0),energy(0){}; */
+/* }; */
 
 class CH_3D : public Problem
 {

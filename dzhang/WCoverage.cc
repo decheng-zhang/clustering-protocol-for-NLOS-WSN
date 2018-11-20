@@ -73,7 +73,7 @@ double WCoverage:: evaluateCoverageRedun(const vector<int> &chs_id)
 	       denominator += 1.0 / (double)coveredTimes ;
 	     }
 	   }
-	  coverageRedun += numerator/ denominator;
+	  coverageRedun += (double) numerator/ denominator;
 	}else{
 	  //does nothing,  no covertin, no coverage redundancy;
 	}
