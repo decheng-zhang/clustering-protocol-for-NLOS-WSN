@@ -1,9 +1,6 @@
 SN.node[0].xCoor = 0
 SN.node[0].yCoor = 0
 SN.node[0].zCoor = 0
-SN.node[0].xCoor = 0
-SN.node[0].yCoor = 0
-SN.node[0].zCoor = 103.2
 SN.node[1].xCoor = 54.8814
 SN.node[1].yCoor = 59.2845
 SN.node[1].zCoor = 165.2
