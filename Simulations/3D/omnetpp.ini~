@@ -1,0 +1,181 @@
+[General]
+include ../Parameters/Castalia.ini
+include ../Parameters/MAC/CSMA.ini
+sim-time-limit = 1500s
+
+#########################
+## Traces           #####
+########################
+SN.wirelessChannel.collectTraceInfo = false
+SN.node[*].Communication.Radio.collectTraceInfo = false
+SN.node[*].Communication.MAC.collectTraceInfo = false
+SN.node[*].Communication.Routing.collectTraceInfo = true
+SN.node[*].Application.collectTraceInfo = false
+SN.node[*].SensorManager.collectTraceInfo = false
+SN.node[*].ResourceManager.collectTraceInfo = false
+
+#########################
+## MAC              #####
+########################
+
+SN.node[*].Communication.MAC.MACProtocolName = "TMAC"
+
+
+#########################
+## Routing         #####
+########################
+SN.node[*].Communication.Routing.percentage = 5
+SN.node[*].Communication.Routing.energy = 18720
+SN.node[*].Communication.Routing.netBufferSize = 1000 
+SN.node[0].Communication.Routing.isSink = true
+SN.node[*].Communication.Routing.numOfCHs = 3
+SN.node[*].Communication.Routing.swarmSize = 50
+SN.node[*].Communication.Routing.routingSwarmSize = 100
+SN.node[*].Communication.Routing.epoch = 500
+SN.node[*].Communication.Routing.slotLength = 1.0
+SN.node[*].Communication.Routing.roundLength = 500s
+SN.node[*].Communication.Routing.numberOfRounds = 5
+SN.node[*].Communication.Routing.sensingRange = 20.0
+SN.node[*].Communication.Routing.powersConfig = xmldoc("powersConfig.xml")
+
+#########################
+## Application      #####
+########################
+SN.node[*].ApplicationName = "ThroughputTest"
+SN.node[*].Application.packet_rate = 1
+SN.node[*].Application.constantDataPayload = 0
+
+#########################
+## Wireless Channel #####
+########################
+SN.wirelessChannel.onlyStaticNodes = true
+#SN.wirelessChannel.pathLossMapFile = "PathLossMap.txt"
+
+#########################
+## Radio           #####
+########################
+SN.node[*].Communication.Radio.RadioParametersFile = "../Parameters/Radio/CC2420.txt"
+
+[Config 100]
+SN.field_x = 100				#meter
+SN.field_y = 100
+SN.field_z = 200
+SN.numNodes = 100
+include Elevation.txt
+
+[Config 200]
+SN.field_x = 100				#meter
+SN.field_y = 100
+SN.field_z = 200
+SN.numNodes = 200
+SN.deployment = "[1..199]->uniform"
+include Elevation.txt
+
+[Config 300]
+SN.field_x = 100				#meter
+SN.field_y = 100
+SN.field_z = 200
+SN.numNodes = 300
+SN.deployment = "[1..299]->uniform"
+include Elevation.txt
+
+[Config 400]
+SN.field_x = 100				#meter
+SN.field_y = 100
+SN.field_z = 200
+SN.numNodes = 400
+SN.deployment = "[1..399]->uniform"
+include Elevation.txt
+
+[Config 500]
+SN.field_x = 100				#meter
+SN.field_y = 100
+SN.field_z = 200
+SN.numNodes = 500
+SN.deployment = "[1..499]->uniform"
+include Elevation.txt
+
+[Config 600]
+SN.field_x = 30				#meter
+SN.field_y = 30
+SN.field_z = 30
+SN.numNodes = 500
+SN.deployment = "[1..599]->uniform"
+
+
+[Config 100w]
+SN.field_x = 50				#meter
+SN.field_y = 50
+SN.field_z = 50
+SN.numNodes = 100
+SN.deployment = "[1..99]->uniform"
+
+[Config 200w]
+SN.field_x = 50				#meter
+SN.field_y = 50
+SN.field_z = 50			#meter
+SN.numNodes = 200
+SN.deployment = "[1..199]->uniform"
+
+[Config 300w]
+SN.field_x = 50				#meter
+SN.field_y = 50
+SN.field_z = 50
+SN.numNodes = 300
+SN.deployment = "[1..299]->uniform"
+
+[Config 400w]
+SN.field_x = 50				#meter
+SN.field_y = 50
+SN.field_z = 50
+SN.numNodes = 400
+SN.deployment = "[1..399]->uniform"
+
+[Config 500w]
+SN.field_x = 50				#meter
+SN.field_y = 50
+SN.field_z = 50
+SN.numNodes = 500
+SN.deployment = "[1..499]->uniform"
+
+[Config NSGA-CH-NLOS]
+SN.node[*].Communication.RoutingProtocolName = "PSO_CCP_3D"
+SN.node[0].Communication.Routing.isObstacleAware = true
+SN.wirelessChannel.pathLossMapFile = "PathLossMap.txt"
+
+[Config NSGA-II-CH-NLOS-CO]
+SN.node[*].Communication.RoutingProtocolName = "NSGA_II_CCP_3D_CO"
+SN.node[0].Communication.Routing.isObstacleAware = true
+SN.wirelessChannel.pathLossMapFile = "PathLossMap.txt"
+
+[Config NSGA-CH-LOS]
+SN.node[*].Communication.RoutingProtocolName = "PSO_CCP_3D"
+SN.node[0].Communication.Routing.isObstacleAware = false
+
+[Config LEACH3D]
+SN.node[*].Communication.RoutingProtocolName = "LeachRouting"
+
+[Config PSO-C]
+SN.node[*].Communication.RoutingProtocolName = "PSO_C"
+
+[Config PSO-CH]
+SN.node[*].Communication.RoutingProtocolName = "PSO_CH"
+SN.node[*].Communication.Routing.populationSize = 50
+SN.node[*].Communication.Routing.EAprotocol = 1
+
+[Config NSGA_CH_3D]
+SN.node[*].Communication.RoutingProtocolName = "EA_CH_3D"
+
+[Config MOEAD_CCP]
+SN.node[*].Communication.RoutingProtocolName = "MOED_CC"
+
+[Config NSGA-CCP-3D]
+SN.node[*].Communication.RoutingProtocolName = "LOS_CCP_3D"
+
+[Config CPCP]
+SN.node[*].Communication.RoutingProtocolName = "CPCP"
+SN.node[*].Communication.Routing.initialEnergy = 18720
+
+
+
+
